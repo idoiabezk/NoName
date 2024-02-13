@@ -2,7 +2,7 @@ project:
   type: book
 
 book:
-  title: "R course"
+  title: "R course book trial"
   author: "Idoia"
   date: "2024-02-12"
   chapters:
