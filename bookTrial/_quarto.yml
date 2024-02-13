@@ -2,8 +2,8 @@ project:
   type: book
 
 book:
-  title: "bookTrial"
-  author: "Norah Jones"
+  title: "R course book"
+  author: "Idoia Beloki Ezker"
   date: "2024-02-13"
   chapters:
     - index.qmd

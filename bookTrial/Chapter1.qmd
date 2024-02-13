@@ -1,0 +1,5 @@
+# Getting familiar with R programming
+
+This first chapter summarized all the basic information for understanding how R works. 
+
+When talking about programming
