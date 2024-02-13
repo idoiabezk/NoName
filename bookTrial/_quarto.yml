@@ -2,9 +2,9 @@ project:
   type: book
 
 book:
-  title: "R course book trial"
-  author: "Idoia"
-  date: "2024-02-12"
+  title: "bookTrial"
+  author: "Norah Jones"
+  date: "2024-02-13"
   chapters:
     - index.qmd
     - intro.qmd
