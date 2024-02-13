@@ -1,5 +1,10 @@
 # Getting familiar with R programming
 
-This first chapter summarized all the basic information for understanding how R works. 
+**This first chapter summarized all the basic information for understanding how R works.**
 
-When talking about programming
+Before starting with Rstudio functioning, it is essential to briefly summarize the terminology and different elements used in programming.
+
+-   **Command:** The command refers to a specific instruction or operation written in the R programming language that users enter into the console or the script editor. In other words, the command is the code that is written to perform various tasks.
+-   **Console:** the console refers to the interactive environment where users can directly enter and execute R commands. It provides immediate feedback, displaying the output of commands, errors, warnings, and messages generated during code execution. It is important to remark that the data displayed in the console is not saved. 
+-   **Script:** the script refers to a file containing a series of R commands and functions written in the R programming language. Scripts are used to organize and execute multiple commands sequentially to achieve specific tasks, such as data analysis, visualization, or modeling.
+
