@@ -52,8 +52,7 @@ RStudio works best with vectorized data. A **vector** is a basic data structure 
 
 In this example, we have used the operator ":" which gives as a result a group of numbers between 1 and 6. This group of number is what we call a vector.
 
-If we would like to reuse this vector, then we would need to first save them. For this, Rstudio allows us to generate an **object**. In the context of RStudio, an object refers to a data structure that holds a value or values. 
-We need to be careful when naming objects, if they start with a number or a special symbol Rstudio will not be able to run it. Also,  we need to keep in mind that Rstudio is affected by the capital letters and "House" and "house" are two different things for R. Moreover, we can't forget that R overwrites the object names, we can always which names have been already assigned by running 1s()
+If we would like to reuse this vector, then we would need to first save them. For this, Rstudio allows us to generate an **object**. In the context of RStudio, an object refers to a data structure that holds a value or values. We need to be careful when naming objects, if they start with a number or a special symbol Rstudio will not be able to run it. Also, we need to keep in mind that Rstudio is affected by the capital letters and "House" and "house" are two different things for R. Moreover, we can't forget that R overwrites the object names, we can always which names have been already assigned by running 1s()
 
 Following up with the previous example we can create an object for the vector, so later on, we will be able to use it in other operations.
 
@@ -61,14 +60,16 @@ Following up with the previous example we can create an object for the vector, s
 a <- 1:6 #we generate the object named "a" and it will contain the result of the operation "1:6"
 ```
 
-Now we will have an object named "a" in our environment which contains the vector (1, 2, 3, 4, 5, 6), and if we want to operate with it we just need to write the name of the object (a) in our command, such as: 
+Now we will have an object named "a" in our environment which contains the vector (1, 2, 3, 4, 5, 6), and if we want to operate with it we just need to write the name of the object (a) in our command, such as:
 
 ```{r}
 a+2
 ```
-As it can be seen in the example, when we sum 2 to the vector named "a", R does **element-wise execution**, in other words, it sums 2 to every element in our vector, in this example: (1+2, 2+2, 3+2, 4+2, 5+2, 6+2). R will also element-wise execution when operating with two vectors, and if these do not have the same lengths, R will repeat the short one as long as the long one, this is known as **vector recycling**. 
+
+As it can be seen in the example, when we sum 2 to the vector named "a", R does **element-wise execution**, in other words, it sums 2 to every element in our vector, in this example: (1+2, 2+2, 3+2, 4+2, 5+2, 6+2). R will also element-wise execution when operating with two vectors, and if these do not have the same lengths, R will repeat the short one as long as the long one, this is known as **vector recycling**.
 
 However, if we would like to do a traditional matrix operation, we should include "%" before and after our operation, for example:
+
 ```{r}
 a%*%a
 ```
