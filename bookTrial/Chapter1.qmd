@@ -149,5 +149,5 @@ library(ggplot2) #load the function
 x <- c(1,1,2,2,2,3) #define the data
 qplot(x, binwidth = 1) #the function and the arguments we want to use
 ```
-Each package uses different functions, and it might be confusing to know how they operate and how to input the augments. R comes with a "Help" option, if we write in the console "?packagename", where packagename refers to the acutall name of teh package, we will wil the information about how to use it. Note that for being able to get the help, the package need to be installed before. 
+Each package uses different functions, and it might be confusing to know how they operate and how to input the augments. R comes with a "Help" option, if we write in the console "?packagename", where packagename refers to the actual name of the package, we will will the information about how to use it. Note that for being able to get the help, the package need to be installed before. 
 
