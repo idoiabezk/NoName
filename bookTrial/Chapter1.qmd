@@ -131,7 +131,7 @@ ana <- function(b2){
   b3 <- sample(b2, size = 2)
   sum(b3)
 }
-ana () #It gives us error because we have not defined what "b2" is
+#ana() gives us error because we have not defined what "b2" is
 ```
 
 ```{r}
@@ -149,7 +149,7 @@ We can build up our own functions, but can also use these that other people have
 For instance, "qplot" is a function used for making quick plots in R, but it is part of the package"ggplot2", so for being able to use it, we must install the package and load the library:
 
 ```{r}
-install.packages("ggplot2") #install the package
+#install.packages("ggplot2") to install the package (I don't want to run because I alredy have it)
 library(ggplot2) #load the function
 x <- c(1,1,2,2,2,3) #define the data
 qplot(x, binwidth = 1) #the function and the arguments we want to use
