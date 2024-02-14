@@ -32,7 +32,9 @@ Before starting with Rstudio functioning, it is essential to briefly summarize t
 -   **Git Pane:** if you are using version control with Git, the Git pane allows you to manage your Git repositories, commit changes, and view version history.
 -   **Toolbar:** the toolbar provides quick access to commonly used actions and commands, such as saving files, running code, and debugging.
 
-### *Basic operations*
+## **Basic operating**
+
+### *Ins and outs*
 
 In Rstudio there are two ways of running a command, in other words telling the system to do a task: we can press "ctrl" "Enter", or we can click on the "Run" icon in the tool bar. We can also cancel a command by pressing "ctrl" "c".
 
@@ -78,20 +80,34 @@ a%*%a
 
 A function is the task that we ask R to realize, it contains the operations or calculations that can be applied to input data. Some of examples of functions can be the ones bellow:
 
--   **Round()** it is used to round numerical values to a specified number of decimal places, for example: 
+-   **Round()** it is used to round numerical values to a specified number of decimal places, for example:
+
 ```{r}
 round(2,1)
 ```
--   **meann()** it is used to calculate the arithmetic mean (average) of a numeric vector or values, for example:
+
+-   **mean()** it is used to calculate the arithmetic mean (average) of a numeric vector or values, for example:
+
 ```{r}
 mean(a)
 ```
+
 -   **sum()** it is used to calculate the sum of numeric values in a vector or a data frame, for example:
+
 ```{r}
 sum(a)
 ```
+
 -   **sample()** it is used to generate random samples from a specified set of elements, for example:
+
 ```{r}
 sample(a)
 ```
-There are many functions that we can use in Rstudio, and all of them are composed by three main parts: a name, a body of the code and a set of arguments. 
+
+-   **c()** it is used to combine values into a single vector or list, for example:
+
+```{r}
+c(1, 5, 12, 20)
+```
+
+There are many functions that we can use in Rstudio, and all of them are composed by three main parts: a name, a body of the code and a set of arguments.
