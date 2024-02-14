@@ -12,7 +12,8 @@ editor_options:
 
 When talk about R objects we are referring to the data set. The different ways of defining our data set are described below.
 
-###   **Vectors**
+### **Vectors**
+
 Vectors can only save one-dimension data and only one type of data. We have different types of vectors, such as, numerical, text and logical, look at the examples below:
 
 ```{r}
@@ -42,7 +43,8 @@ length(v1)
 
 Keep in mind that a vector can also contain just one value.
 
-####   **Attributes** 
+#### **Attributes**
+
 Attributes are pieces of information that we can attach to a vector, we can look at them by "attributes(vector)", where vector should be substituted by the name of the vector that we want to check. For example, if we want to attributed names to the values of the vector "v1" we can write an attribute to them:
 
 ```{r}
@@ -68,47 +70,105 @@ If now look at the vector, the names of the values won't be there anymore:
 v1
 ```
 
-###   **Matrices** 
+### **Matrices**
+
 Matrices are used for storing values in two dimensions. We can for example transform a vector into a matrix by attributing two dimensions:
+
 ```{r}
 dim(v1) <- c(2,3)
 v1
 ```
+
 R will fill in the matrix column by column by default, if we want to fill it by row we have to set up "byrow = TRUE".
+
 ```{r}
 m1 <- matrix(v1, nrow =2) #it will fill it by column
 m1
 ```
+
 ```{r}
 m2 <- matrix(v1, nrow =2, byrow = TRUE) #it will fill it by row
 m2
 ```
-###   **List** 
+
+### **List**
+
 Lists are data structures that can contain elements of different types (such as vectors, matrices, other lists, functions, etc.) in a single object. Note that the elements are not grouped together, and so, it allows us to have vectors of different lengths and characteristics, an example:
+
 ```{r}
 l1 <- list(10:30, "Idoia", list(TRUE, FALSE))
 l1
 ```
 
-###   **Data frame** 
-Data frames are the two dimensional version of a list, they group vectors together into a two-dimensional table, where each vector becomes a column in the table. Therefore, we must have the same type of data in each column, but we can have different types of data between several columns, such as: 
+### **Data frame**
+
+Data frames are the two dimensional version of a list, they group vectors together into a two-dimensional table, where each vector becomes a column in the table. Therefore, we must have the same type of data in each column, but we can have different types of data between several columns, such as:
+
 ```{r}
-df1 <- data.frame(people = c("Victoria", "Thanh", "Idoia"),  
-  description = c("student", "boss", "student"), height = c(1.63, 1.70, 1.65))
+df1 <- data.frame(People = c("Victoria", "Thanh", "Idoia"),  
+  Position = c("Student", "Boss", "Student"), YearsWorking = c(0.17, 25, 2.17))
 df1
 ```
-As it can be seen in the previous example, a data frame allows us to give names to the different vectors that we have, in this case "people", "description" and "height"
 
-###   **Arrays** 
+As it can be seen in the previous example, a data frame allows us to give names to the different vectors that we have, in this case "People", "Position" and "YearsWorking".
+
+### **Arrays**
+
 Arrays are used for storing values of the same data type in multiple dimensions, for example to sort values into a 3 dimensional cube, like:
+
 ```{r}
-ar<- array(c(11:14,21:24,31:34), dim = c(2,2,3))
-ar
+ar1<- array(c(11:14,21:24,31:34), dim = c(2,2,3))
+ar1
 ```
 
 ### **Playing with the objects**
 
-####   **Class** 
-Class refers to the type or category of an object, it will tell us what tyoe if structure do we have. 
+#### **Class**
 
-####   **Coercion** 
+Class refers to the type or category of an object, it will tell us what type if structure do we have:
+
+```{r}
+class(df1)
+```
+
+Knowing the class of the data might be very useful in some occasions, such as with the dates the dates. In this case we have is a numerical vector, it is displayed like a text. This is because the class of the data represent the dates ans times are "POSIXct" AND "POSIXt", for example:
+
+```{r}
+now <- Sys.time()
+now
+typeof(now)
+
+```
+
+*Double refers to the numerical vectors*
+
+```{r}
+class(now)
+```
+
+Changing the class of a vector might be very useful when we want to categorize our values too. Is we have for instance a vector that contains "text", but we want to sort it into categories, we can use the function "factor()" that will allow us to change the class of our vector from text to factors, for instance:
+
+```{r}
+v4<- c("male", "female", "male")
+class(v4)
+```
+
+```{r}
+gender <- factor(v4)
+attributes(gender)
+```
+
+Now we have our vector into categories:
+
+```{r}
+unclass(gender) #it will display our data into the categories 1 and 2
+```
+
+#### **Coercion**
+
+In R, coercion refers to the process of converting an object from one data type or class to another.
+
+R always follows the same rules when it coerces data types:
+
+-   If a character string is present in a vector, R will convert everything else in the vector to character strings.
+-   If a vector only contains logicals and numbers, R will convert the logicals to numbers (every TRUE becomes a 1, and every FALSE becomes a 0)
