@@ -304,4 +304,5 @@ Here are some of the most used boolean operators:
 ### **Missing information**
 When we miss some information R will display "NA" which means "Not Available"
 For removing the "NA2s we can use: na.rm = TRUE
+
 ## **Environments**
