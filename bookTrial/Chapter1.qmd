@@ -60,6 +60,7 @@ Following up with the previous example we can create an object for the vector, s
 
 ```{r}
 a <- 1:6 #we generate the object named "a" and it will contain the result of the operation "1:6"
+a
 ```
 
 Now we will have an object named "a" in our environment which contains the vector (1, 2, 3, 4, 5, 6), and if we want to operate with it we just need to write the name of the object (a) in our command, such as:
@@ -110,4 +111,43 @@ sample(a)
 c(1, 5, 12, 20)
 ```
 
-There are many functions that we can use in Rstudio, and all of them are composed by three main parts: a name, a body of the code and a set of arguments.
+There are many functions that we can use in Rstudio, and all of them are composed by three main parts: a name, a body of the code and a set of arguments, for instance the one below: 
+```{r}
+ana <- function(){
+  b <- c(1, 2, 3, 4, 5, 6)
+  b <- sample(b, size = 2)
+  sum(b)
+}
+ana ()
+```
+In this example the name of the function is "ana", the body is everything that come in between the ""{}" and the arguments in this case are values that input for the functions, such as in the case of "sample()" the arguments are "b" (the data set that we are imputing) and "size =2" (how many values do we want that R gets out of this data set). Note that if we don't know which are the arguments for a function we can always use "args(the name of the function)2 in the console and it will give us a description how to imput the arguments. Now that we have name the function we can just write the name instead of rewriting the entire function body, as it can be seen in the example "ana()" gives the output of the entire function.
+
+We also put an argument in the function, such as "ana(b2)", now the function "ana" will only work when we input what the argument "b2" is, for instance:
+```{r}
+ana <- function(b2){
+  b3 <- sample(b2, size = 2)
+  sum(b3)
+}
+ana () #It gives us error because we have not defined what "b2" is
+```
+
+```{r}
+ana <- function(b2){
+  b3 <- sample(b2, size = 2)
+  sum(b3)
+}
+ana (b2 = 1:4) #Here we define what "b2" is and Rstudio can run the function "ana()" for it
+```
+### *Packages*
+
+We can build up our own functions, but can also use these that other people have already coded. For this, we have to install **packages** and load their **libraries**. A package is a collection of R functions, data sets, and compiled code in a well-defined format, while a library refers to a directory where installed packages are stored on your computer. When you install a package, its files are copied to a specific location on your system. This location is referred to as the library. So, depending on our aim we will install different packages and load their libraries. Note that we only need to install a package once, but we need to load its library every R session we want to use it. 
+
+For instance, "qplot2 is a function used for making quick plots in R, but it is part of the package "ggplot2", so for being able to use it, we must install the package and load the library:
+```{r}
+install.packages("ggplot2") #install the package
+library(ggplot2) #load the function
+x <- c(1,1,2,2,2,3) #define the data
+qplot(x, binwidth = 1) #the function and the arguments we want to use
+```
+Each package uses different functions, and it might be confusing to know how they operate and how to input the augments. R comes with a "Help" option, if we write in the console "?packagename", where packagename refers to the acutall name of teh package, we will wil the information about how to use it. Note that for being able to get the help, the package need to be installed before. 
+

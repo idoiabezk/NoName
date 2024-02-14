@@ -176,8 +176,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#terminology" id="toc-terminology" class="nav-link" data-scroll-target="#terminology"><span class="header-section-number">2.1.1</span> <em>Terminology</em></a></li>
   <li><a href="#r-studio-elements" id="toc-r-studio-elements" class="nav-link" data-scroll-target="#r-studio-elements"><span class="header-section-number">2.1.2</span> <em>R studio elements</em></a></li>
-  <li><a href="#basic-operations" id="toc-basic-operations" class="nav-link" data-scroll-target="#basic-operations"><span class="header-section-number">2.1.3</span> <em>Basic operations</em></a></li>
-  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions"><span class="header-section-number">2.1.4</span> <em>Functions</em></a></li>
+  </ul></li>
+  <li><a href="#basic-operating" id="toc-basic-operating" class="nav-link" data-scroll-target="#basic-operating"><span class="header-section-number">2.2</span> <strong>Basic operating</strong></a>
+  <ul class="collapse">
+  <li><a href="#ins-and-outs" id="toc-ins-and-outs" class="nav-link" data-scroll-target="#ins-and-outs"><span class="header-section-number">2.2.1</span> <em>Ins and outs</em></a></li>
+  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions"><span class="header-section-number">2.2.2</span> <em>Functions</em></a></li>
   </ul></li>
   </ul>
 </nav>
@@ -230,8 +233,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Toolbar:</strong> the toolbar provides quick access to commonly used actions and commands, such as saving files, running code, and debugging.</li>
 </ul>
 </section>
-<section id="basic-operations" class="level3" data-number="2.1.3">
-<h3 data-number="2.1.3" class="anchored" data-anchor-id="basic-operations"><span class="header-section-number">2.1.3</span> <em>Basic operations</em></h3>
+</section>
+<section id="basic-operating" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="basic-operating"><span class="header-section-number">2.2</span> <strong>Basic operating</strong></h2>
+<section id="ins-and-outs" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="ins-and-outs"><span class="header-section-number">2.2.1</span> <em>Ins and outs</em></h3>
 <p>In Rstudio there are two ways of running a command, in other words telling the system to do a task: we can press “ctrl” “Enter”, or we can click on the “Run” icon in the tool bar. We can also cancel a command by pressing “ctrl” “c”.</p>
 <p>Rstudio will take everything that we write in the Script Editor or console as a command, and if we want to add a comment in our command we should write “#” before, R will understand that what comes after is not a command. When we command something in the console, the results appear with a number in brackets, for example:</p>
 <div class="cell">
@@ -271,8 +277,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="functions" class="level3" data-number="2.1.4">
-<h3 data-number="2.1.4" class="anchored" data-anchor-id="functions"><span class="header-section-number">2.1.4</span> <em>Functions</em></h3>
+<section id="functions" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="functions"><span class="header-section-number">2.2.2</span> <em>Functions</em></h3>
 <p>A function is the task that we ask R to realize, it contains the operations or calculations that can be applied to input data. Some of examples of functions can be the ones bellow:</p>
 <ul>
 <li><strong>Round()</strong> it is used to round numerical values to a specified number of decimal places, for example:</li>
@@ -307,7 +313,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sample</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 6 5 4 1 2 3</code></pre>
+<pre><code>[1] 1 6 3 5 2 4</code></pre>
 </div>
 </div>
 <ul>
