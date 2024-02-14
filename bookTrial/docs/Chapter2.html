@@ -193,7 +193,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#arrays" id="toc-arrays" class="nav-link" data-scroll-target="#arrays"><span class="header-section-number">3.1.5</span> <strong>Arrays</strong></a></li>
   <li><a href="#playing-with-the-objects" id="toc-playing-with-the-objects" class="nav-link" data-scroll-target="#playing-with-the-objects"><span class="header-section-number">3.1.6</span> <strong>Playing with the objects</strong></a></li>
   </ul></li>
-  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">3.2</span> <strong>Notation</strong></a></li>
+  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">3.2</span> <strong>Notation</strong></a>
+  <ul class="collapse">
+  <li><a href="#extracting-values-from-a-data-frame" id="toc-extracting-values-from-a-data-frame" class="nav-link" data-scroll-target="#extracting-values-from-a-data-frame"><span class="header-section-number">3.2.1</span> <strong>Extracting values from a data frame</strong></a></li>
+  <li><a href="#extracting-columns-from-a-data-frame" id="toc-extracting-columns-from-a-data-frame" class="nav-link" data-scroll-target="#extracting-columns-from-a-data-frame"><span class="header-section-number">3.2.2</span> <strong>Extracting columns from a data frame</strong></a></li>
+  </ul></li>
   <li><a href="#modifying-values" id="toc-modifying-values" class="nav-link" data-scroll-target="#modifying-values"><span class="header-section-number">3.3</span> <strong>Modifying values</strong></a></li>
   <li><a href="#environments" id="toc-environments" class="nav-link" data-scroll-target="#environments"><span class="header-section-number">3.4</span> <strong>Environments</strong></a></li>
   </ul>
@@ -406,7 +410,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>now <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>now</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "2024-02-14 16:27:15 CET"</code></pre>
+<pre><code>[1] "2024-02-14 16:49:25 CET"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(now)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -462,6 +466,67 @@ attr(,"levels")
 </section>
 <section id="notation" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="notation"><span class="header-section-number">3.2</span> <strong>Notation</strong></h2>
+<p>Depending on the notation that we use in our commands R will realize one task or another, therefore it is very important to be cautious when writing the code.</p>
+<section id="extracting-values-from-a-data-frame" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="extracting-values-from-a-data-frame"><span class="header-section-number">3.2.1</span> <strong>Extracting values from a data frame</strong></h3>
+<p>If we want to extract on specific value from a data frame, we should use the [] instead of (), for example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>df1[<span class="dv">2</span>,<span class="dv">3</span>] <span class="co">#[a,b] where a=row and b=column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 25</code></pre>
+</div>
+</div>
+<p>We also use it for extracting more than one value, such as:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>df1[<span class="dv">2</span>,<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Position YearsWorking
+2     Boss           25</code></pre>
+</div>
+</div>
+<p>We can use to create a new data frame out of the previous one:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>df2<span class="ot">&lt;-</span> df1[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>df2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    People Position
+1 Victoria  Student
+2    Thanh     Boss</code></pre>
+</div>
+</div>
+<p>Note that if we extract only one column, we will get a vector instead.</p>
+<p>We can also apply this principle in the opposite direction, in other words, we can extract everything but a value for instance:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>df1[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="sc">-</span><span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    People YearsWorking
+1 Victoria         0.17
+2    Thanh        25.00
+3    Idoia         2.17</code></pre>
+</div>
+</div>
+<p>We could leave a blank space, this will allow us to extract everything in the dimension:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>df1[<span class="dv">1</span>,]<span class="co">#it will extract everything in the first row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    People Position YearsWorking
+1 Victoria  Student         0.17</code></pre>
+</div>
+</div>
+<p>Note that we can also use logical vectors and extract elements by name.</p>
+</section>
+<section id="extracting-columns-from-a-data-frame" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="extracting-columns-from-a-data-frame"><span class="header-section-number">3.2.2</span> <strong>Extracting columns from a data frame</strong></h3>
+<p>If we want to extract a column from a data frame we can also use the”$” sign, for example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>People <span class="co">#from the data frame "df1", the column "People"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Victoria" "Thanh"    "Idoia"   </code></pre>
+</div>
+</div>
+<p>Note that R will return the values as a vector.</p>
+<p>Another option for extracting a column is to use the double “[[]]”, it will act the same way as the “$” sign.</p>
+</section>
 </section>
 <section id="modifying-values" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="modifying-values"><span class="header-section-number">3.3</span> <strong>Modifying values</strong></h2>

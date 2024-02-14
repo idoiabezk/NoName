@@ -213,5 +213,31 @@ Note that R will return the values as a vector.
 Another option for extracting a column is to use the double "[[]]", it will act the same way as the "$" sign.
 
 ## **Modifying values**
+### **Changing values**
+We can change the values from our data, for instance we can change one of the values of a numeric vector by renaming it:
+```{r}
+v5<- c(0,0,0,0,0,0)
+v5[1]<-1000 #we select the first value of the vector "v5" and we replace it by "1000"
+v5
+```
+We can apply the same principle to replace multiple variables:
+```{r}
+v5[c(1,2,3)]<-c(1,1,1)
+v5
+```
+
+Another option could be to add more variables:
+```{r}
+v5[7]<-0 #we select the 7th value of the vector v5 which is empty and replace it for a 0
+v5
+```
+This principle can also be applied to remove some values as well:
+```{r}
+df1$Position<-NULL #We select the column "Position" from the data frame "df1" and delete it
+df1
+```
+
+### **Logical subsetting**
+### **Boolean operators**
 ## **Environments**
 
