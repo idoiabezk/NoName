@@ -1,0 +1,9 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Working flows on R programming
+
+**This third chapter takes the first steps into how Rstudio operates the different functions that we input. This sections goes through the if and else statement, the S3 system, the loops and the speed.**

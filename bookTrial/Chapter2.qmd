@@ -91,7 +91,7 @@ m2 <- matrix(v1, nrow =2, byrow = TRUE) #it will fill it by row
 m2
 ```
 
-### **List**
+### **Lists**
 
 Lists are data structures that can contain elements of different types (such as vectors, matrices, other lists, functions, etc.) in a single object. Note that the elements are not grouped together, and so, it allows us to have vectors of different lengths and characteristics, an example:
 
@@ -100,7 +100,7 @@ l1 <- list(10:30, "Idoia", list(TRUE, FALSE))
 l1
 ```
 
-### **Data frame**
+### **Data frames**
 
 Data frames are the two dimensional version of a list, they group vectors together into a two-dimensional table, where each vector becomes a column in the table. Therefore, we must have the same type of data in each column, but we can have different types of data between several columns, such as:
 
@@ -171,4 +171,47 @@ In R, coercion refers to the process of converting an object from one data type 
 R always follows the same rules when it coerces data types:
 
 -   If a character string is present in a vector, R will convert everything else in the vector to character strings.
--   If a vector only contains logicals and numbers, R will convert the logicals to numbers (every TRUE becomes a 1, and every FALSE becomes a 0)
+-   If a vector only contains logicals and numbers, R will convert the logicals to numbers (every TRUE becomes a 1, and every FALSE becomes a 0).
+
+
+## **Notation**
+Depending on the notation that we use in our commands R will realize one task or another, therefore it is very important to be cautious when writing the code.
+
+### **Extracting values from a data frame**
+If we want to extract on specific value from a data frame, we should use the [] instead of (), for example:
+```{r}
+df1[2,3] #[a,b] where a=row and b=column
+```
+We also use it for extracting more than one value, such as:
+```{r}
+df1[2,c(2,3)]
+```
+We can use to create a new data frame out of the previous one:
+```{r}
+df2<- df1[1:2,1:2]
+df2
+```
+Note that if we extract only one column, we will get a vector instead. 
+
+We can also apply this principle in the opposite direction, in other words, we can extract everything but a value for instance:
+```{r}
+df1[1:3,-2]
+```
+We could leave a blank space, this will allow us to extract everything in the dimension:
+```{r}
+df1[1,]#it will extract everything in the first row
+```
+Note that we can also use logical vectors and extract elements by name.
+
+### **Extracting columns from a data frame**
+If we want to extract a column from a data frame we can also use the"$" sign, for example:
+```{r}
+df1$People #from the data frame "df1", the column "People"
+```
+Note that R will return the values as a vector. 
+
+Another option for extracting a column is to use the double "[[]]", it will act the same way as the "$" sign.
+
+## **Modifying values**
+## **Environments**
+
