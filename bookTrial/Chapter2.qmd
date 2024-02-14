@@ -1,0 +1,84 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Hands-on R programming
+
+**This second chapter goes through several ways of imputing the data in R, the different notations, how to deal when values are missing and the environments.**
+
+## **R objects**
+
+When talk about R objects we are referring to the data set. The different ways of defining our data set are described below.
+
+-   **Vectors:** vectors can only save one-dimension data and only one type of data. We have different types of vectors, such as, numerical, text and logical, look at the examples below:
+
+```{r}
+v1 <- c(1,2,3,4,5,6) #numerical
+v1
+```
+
+```{r}
+v2 <- c("I", "am", "Idoia") #text
+v2
+```
+
+```{r}
+v3 <- c(TRUE, FALSE, TRUE) #logical
+v3
+```
+
+Note that R will be able to do mathematical operations with vectors that contain numerical values, but not with the ones that have text. If we want to check is an object is a vector or not, we can write "is.vector" and if we want to know the length of a vector "length" will give it:
+
+```{r}
+is.vector(v1)
+```
+
+```{r}
+length(v1)
+```
+
+Keep in mind that a vector can also contain just one value.
+
+-   **Attributes:** attributes are pieces of information that we can attach to a vector, we can look at them by "attributes(vector)", where vector should be substituted by the name of the vector that we want to check. For example, if we want to attributed names to the values of the vector "v1" we can write an attribute to them:
+
+```{r}
+names(v1)<- c("one", "two", "three", "four", "five", "six") #names if the attribute that we want to add and in brackets the vector that we want to add them to
+attributes(v1) #will show us the attributes of the vector "v1"
+```
+
+R will display the attributed is we just look at the vector too:
+
+```{r}
+v1
+```
+
+We can also remove the attributes from a vector:
+
+```{r}
+names(v1) <- NULL
+```
+
+If now look at the vector, the names of the values won't be there anymore:
+
+```{r}
+v1
+```
+
+-   **Matrices:** matrices are used for storing values in two dimensions. We can for example transform a vector into a matrix by attributing two dimensions:
+```{r}
+dim(v1) <- c(2,3)
+v1
+```
+R will fill in the matrix column by column by default, if we want to fill it by row we have to set up "byrow = TRUE".
+```{r}
+m1 <- matrix(v1, nrow =2) #it will fill it by column
+m1
+```
+```{r}
+m2 <- matrix(v1, nrow =2, byrow = TRUE) #it will fill it by row
+m2
+```
+
+-   **Arrays:** matrices ar
