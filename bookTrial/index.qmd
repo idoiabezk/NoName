@@ -1,9 +1,11 @@
-# Preface {.unnumbered}
+# Index {.unnumbered}
 
-This is a Quarto book.
+The different sections in the book include:
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+-   **Introduction**
 
-```{r}
-1 + 1
-```
+-   **Chapter 1:** Getting familiar with R programming
+
+-   **Chapter 2:** Hands-on R programming
+
+-   **Chapter 3:** Working flows on R programming
