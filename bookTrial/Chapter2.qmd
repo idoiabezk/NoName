@@ -296,7 +296,7 @@ Here are some of the most used boolean operators:
 -   *"&"*: are both true? 
 -  *"|"*: is of them true?
 -   *"xor"*: is exactly one of them true? 
--  *"!"*: is it false? 
+-  *"!"*: is it false? (might be uselful for flipping a condition, for example with !is.na())
 -  *"any"*: are any of these conditions true? 
 -  *"all"*: are all of them true? 
  
@@ -304,6 +304,7 @@ Here are some of the most used boolean operators:
 ### **Missing information**
 When we miss some information R will display "NA" which means "Not Available"
 For removing the "NA2s we can use: na.rm = TRUE
+If what we want does not have the "na.rm" we could use: vector[!is.na()], so it will take everything that is not NA. 
 
 ## **Environments**
 

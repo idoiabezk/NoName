@@ -137,3 +137,5 @@ Rstudio operates the fastest with ***vectorial*** data, this means that it will 
 For writing a vectorial code: 1) use vectorized codes ("\<-") 2) use logical subsetting to handle parallel cases.
 
 Note that the loop "for" operates very slow, and if we do "abs_loop" R uses the "for" loop to manipulate each element of the vector one at the time. Therefore, it is better to use the vectorized version of it: "abs_set".
+
+Remember that R will do the function in the brackets before and then the one out. 
