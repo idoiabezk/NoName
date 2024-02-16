@@ -135,7 +135,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Preface</span></a>
+ <span class="menu-text">Index</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -198,7 +198,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#extracting-values-from-a-data-frame" id="toc-extracting-values-from-a-data-frame" class="nav-link" data-scroll-target="#extracting-values-from-a-data-frame"><span class="header-section-number">3.2.1</span> <strong>Extracting values from a data frame</strong></a></li>
   <li><a href="#extracting-columns-from-a-data-frame" id="toc-extracting-columns-from-a-data-frame" class="nav-link" data-scroll-target="#extracting-columns-from-a-data-frame"><span class="header-section-number">3.2.2</span> <strong>Extracting columns from a data frame</strong></a></li>
   </ul></li>
-  <li><a href="#modifying-values" id="toc-modifying-values" class="nav-link" data-scroll-target="#modifying-values"><span class="header-section-number">3.3</span> <strong>Modifying values</strong></a></li>
+  <li><a href="#modifying-values" id="toc-modifying-values" class="nav-link" data-scroll-target="#modifying-values"><span class="header-section-number">3.3</span> <strong>Modifying values</strong></a>
+  <ul class="collapse">
+  <li><a href="#changing-values" id="toc-changing-values" class="nav-link" data-scroll-target="#changing-values"><span class="header-section-number">3.3.1</span> <strong>Changing values</strong></a></li>
+  <li><a href="#logical-subsetting" id="toc-logical-subsetting" class="nav-link" data-scroll-target="#logical-subsetting"><span class="header-section-number">3.3.2</span> <strong>Logical subsetting</strong></a></li>
+  <li><a href="#boolean-operators" id="toc-boolean-operators" class="nav-link" data-scroll-target="#boolean-operators"><span class="header-section-number">3.3.3</span> <strong>Boolean operators</strong></a></li>
+  <li><a href="#missing-information" id="toc-missing-information" class="nav-link" data-scroll-target="#missing-information"><span class="header-section-number">3.3.4</span> <strong>Missing information</strong></a></li>
+  </ul></li>
   <li><a href="#environments" id="toc-environments" class="nav-link" data-scroll-target="#environments"><span class="header-section-number">3.4</span> <strong>Environments</strong></a></li>
   </ul>
 </nav>
@@ -410,7 +416,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>now <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>now</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "2024-02-14 16:49:25 CET"</code></pre>
+<pre><code>[1] "2024-02-16 08:57:30 CET"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(now)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -530,6 +536,102 @@ attr(,"levels")
 </section>
 <section id="modifying-values" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="modifying-values"><span class="header-section-number">3.3</span> <strong>Modifying values</strong></h2>
+<section id="changing-values" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="changing-values"><span class="header-section-number">3.3.1</span> <strong>Changing values</strong></h3>
+<p>We can change the values from our data, for instance we can change one of the values of a numeric vector by renaming it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>v5<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>v5[<span class="dv">1</span>]<span class="ot">&lt;-</span><span class="dv">1000</span> <span class="co">#we select the first value of the vector "v5" and we replace it by "1000"</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>v5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1000    0    0    0    0    0</code></pre>
+</div>
+</div>
+<p>We can apply the same principle to replace multiple variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>v5[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)]<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>v5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 1 1 0 0 0</code></pre>
+</div>
+</div>
+<p>Another option could be to add more variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>v5[<span class="dv">7</span>]<span class="ot">&lt;-</span><span class="dv">0</span> <span class="co">#we select the 7th value of the vector v5 which is empty and replace it for a 0</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>v5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 1 1 0 0 0 0</code></pre>
+</div>
+</div>
+<p>This principle can also be applied to remove some values as well:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>Position<span class="ot">&lt;-</span><span class="cn">NULL</span> <span class="co">#We select the column "Position" from the data frame "df1" and delete it</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>df1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    People YearsWorking
+1 Victoria         0.17
+2    Thanh        25.00
+3    Idoia         2.17</code></pre>
+</div>
+</div>
+</section>
+<section id="logical-subsetting" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="logical-subsetting"><span class="header-section-number">3.3.2</span> <strong>Logical subsetting</strong></h3>
+<p>Logical tests refer to evaluating an expression to determine whether it is true or false, here are some of the most used logical operators:</p>
+<ul>
+<li><em>“&gt;”</em>: is it greater than?</li>
+<li><em>“&gt;=</em>: is it greater or equal than?</li>
+<li><em>“&lt;”</em>: is it less than?</li>
+<li><em>“&lt;=</em>: is it less or equal than?</li>
+<li><em>“==</em>: is it equal to?</li>
+<li><em>“!=</em>: is not equal to?</li>
+<li><em>“%in%</em>: is it in the group?</li>
+</ul>
+<p>Some examples:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="dv">3</span><span class="sc">&lt;</span><span class="dv">2</span> <span class="co">#is 3 less than 2?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="dv">3</span> <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>) <span class="co">#is 3 in the vector that is in the right?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)<span class="sc">%in%</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>) <span class="co">#%in% doesn't do element-wise execution, it will provide is the values of the vector to the left are any of the values of the vector to the right</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="boolean-operators" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="boolean-operators"><span class="header-section-number">3.3.3</span> <strong>Boolean operators</strong></h3>
+<p>The boolean operators “&amp;” and “|” collapse the results of multiple logical tests into a sinlge TRUE or FALSE, for example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>cond1<span class="ot">&lt;-</span><span class="dv">2</span><span class="sc">&lt;</span><span class="dv">3</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>cond2<span class="ot">&lt;-</span><span class="dv">3</span><span class="sc">&lt;</span><span class="dv">3</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>cond1<span class="sc">&amp;</span>cond2 <span class="co">#are "cond1" and "cond2" true?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<p>Here are some of the most used boolean operators:</p>
+<ul>
+<li><em>“&amp;”</em>: are both true?</li>
+<li><em>“|”</em>: is of them true?</li>
+<li><em>“xor”</em>: is exactly one of them true?</li>
+<li><em>“!”</em>: is it false?</li>
+<li><em>“any”</em>: are any of these conditions true?</li>
+<li><em>“all”</em>: are all of them true?</li>
+</ul>
+</section>
+<section id="missing-information" class="level3" data-number="3.3.4">
+<h3 data-number="3.3.4" class="anchored" data-anchor-id="missing-information"><span class="header-section-number">3.3.4</span> <strong>Missing information</strong></h3>
+<p>When we miss some information R will display “NA” which means “Not Available” For removing the “NA2s we can use: na.rm = TRUE</p>
+</section>
 </section>
 <section id="environments" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="environments"><span class="header-section-number">3.4</span> <strong>Environments</strong></h2>

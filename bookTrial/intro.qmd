@@ -1,3 +1,9 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
 # Introduction
 
 This book compiles the information acquired at the PhD course on R for environmental chemistry data analysis. 
