@@ -306,3 +306,5 @@ When we miss some information R will display "NA" which means "Not Available"
 For removing the "NA2s we can use: na.rm = TRUE
 
 ## **Environments**
+
+Environments refer to the spaces where objects (such as variables, functions, etc.) are created and stored during an R session. 
