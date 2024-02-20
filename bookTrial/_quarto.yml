@@ -12,6 +12,9 @@ book:
     - Chapter1.qmd
     - Chapter2.qmd
     - Chapter3.qmd
+    - Chapter4.qmd
+    - Chapter5.qmd
+    - Chapter6.qmd
     - summary.qmd
     - references.qmd
 
