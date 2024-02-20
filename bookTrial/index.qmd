@@ -16,5 +16,11 @@ The different sections in the book include:
 
 -   **Chapter 3:** Working flows on R programming
 
+-   **Chapter 4:** Exercise 1
+
+-   **Chapter 5:** Data transformation
+
+-   **Chapter 6:** Data tidying
+
 
 
