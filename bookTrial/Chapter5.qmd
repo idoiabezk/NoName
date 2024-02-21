@@ -1,3 +1,21 @@
 ---
-title: "Chapter5"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
 ---
+
+
+# Data transformation
+
+**This third chapter takes the first steps into how Rstudio operates the different functions that we input. This section goes through the if and else statement, the S3 system, the loops, and the speed.**
+
+## **Useful operations**
+
+### **"If" and "Else" statements**
+
+```{r}
+library(nycflights13)
+library(tidyverse)
+
+```
+
