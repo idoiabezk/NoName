@@ -5,7 +5,7 @@ editor_options:
 ---
 
 
-# Plotting
+# Plotting with ggplot
 
 **This fourd chapter is some examples on how to plot and play around with the data.**
 
@@ -90,5 +90,55 @@ ggplot(data = Statistics_Kumla_20200408) +
     breaks = c(10, 50, 100, 500, 1000),  # Adjust the breaks to include more values
     labels = c("10", "50", "100", "500", "1000")  # Adjust labels accordingly
   )
+```
+
+
+```{r}
+ggplot(data = Statistics_Kumla_20200408) +
+ geom_point(mapping = aes(x = PFOA, y = PFBA, size = PFOS), colour = "black") +
+  scale_size_continuous(
+    name = "PFOS Description",
+    breaks = c(10, 50, 100, 500, 1000),  # Adjust the breaks to include more values
+    labels = c("10", "50", "100", "500", "1000")  # Adjust labels accordingly
+  ) +
+  geom_smooth(mapping = aes(x = PFOA, y = PFOS), 
+              method = "lm", 
+              se = FALSE, 
+              colour = "orange",
+              size = 2) +
+  geom_smooth(mapping = aes(x = PFOA, y = PFOS), 
+              method = "loess",
+              se = FALSE,
+              colour = "green",
+              size = 2) +
+  geom_point(mapping = aes(x = PFOA, y = PFBS, # new mapping
+                           size = PFBS), # size of points according to PFBS values
+             colour = "purple") + # colour outside of mappings 
+  theme_classic() # This theme will remove the background colours and lines
+```
+
+```{r}
+PFAS_insects_long <- Statistics_Kumla_20200408 %>% # shortcut for pipe Ctrl + shift + M
+  pivot_longer(cols = PFBA:PFOA, # select all columns from PFBA to sum_21PFAS
+               names_to = "somePFAS", # name of the new column
+               values_to = "Conc") %>%  #name of the values from PFBA:sum_21PFAS
+  mutate(somePFAS = as.factor(somePFAS)) #make PFAS column a factor variable
+```
+
+```{r}
+#check the PFAS group names
+PFAS_insects_long |> group_by(somePFAS) |> tally() |> view() 
+# select PFOS isomers
+PFOS_branched <- c("1-PFOS 419/169", "3/4/5-PFOS80/98.9")
+
+PFAS_insects_long |>
+  filter(Group != "Water") |> #remove all water samples to only include solid samples
+  filter(str_detect(somePFAS, "sum_", negate = TRUE)) |> #remove all sum of PFAS using the argument: negate=TRUE 
+ggplot(aes(x = somePFAS, y = Conc)) +
+  geom_point() +
+  geom_boxplot() +
+  theme_classic() +
+  ylab("Concentration of PFAS (ng/g) in solid samples")
+  
 ```
 
