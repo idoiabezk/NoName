@@ -43,3 +43,52 @@ ggplot(
   geom_smooth(method = "lm")
 ```
 
+```{r}
+
+ggplot(data = Statistics_Kumla_20200408, mapping = aes(x = PFOA, y = PFBA)) +
+  geom_point(size = 2, colour = "black") + # add a scatter plot
+  geom_smooth(method = "lm", # uses the linear regression model
+              se = TRUE, # this will remove the confidence intervals
+              colour = "orange",
+              size = 2) +
+  geom_smooth(method = "loess",
+              se = TRUE,
+              colour = "green",
+              size = 2)
+```
+
+```{r}
+
+ggplot(data = Statistics_Kumla_20200408, mapping = aes(x = PFOA, y = PFOS)) +
+  geom_point(size = 2, colour = "black") + # add a scatter plot
+  geom_smooth(method = "lm", # uses the linear regression model
+              se = FALSE, # this will remove the confidence intervals
+              colour = "orange",
+              size = 2) +
+  geom_smooth(method = "loess",
+              se = FALSE,
+              colour = "green",
+              size = 2)
+```
+
+```{r}
+Statistics_Kumla_20200408 |>  select(Year, PFOA) |> filter(Year== 2017)
+```
+
+
+
+```{r}
+ggplot(data = Statistics_Kumla_20200408) +
+  geom_point(mapping = aes(x = PFOA, y = PFBA, size = PFOS), colour = "black") 
+```
+
+```{r}
+ggplot(data = Statistics_Kumla_20200408) +
+ geom_point(mapping = aes(x = PFOA, y = PFBA, size = PFOS), colour = "black") +  
+  scale_size_continuous(
+    name = "PFOS Description",
+    breaks = c(10, 50, 100, 500, 1000),  # Adjust the breaks to include more values
+    labels = c("10", "50", "100", "500", "1000")  # Adjust labels accordingly
+  )
+```
+

@@ -1,3 +1,138 @@
 ---
 title: "Chapter6"
 ---
+---
+Title: Tidyverse
+output: html_document
+number-sections: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+library(tidyverse)
+PFAS_insects <- readxl::read_excel("data/Statistics_Kumla_20200408.xlsx", 
+    sheet = "Overview")
+```
+
+# Tidyverse
+
+See: <https://www.tidyverse.org/>
+
+## dplyr
+
+The pipe operator `%>%` (or `|>`)
+
+See: <https://r4ds.hadley.nz/data-transform>
+
+<https://r4ds.hadley.nz/data-transform#sec-the-pipe>
+
+### Various dplyr functions
+
+```{r}
+ PFAS_insects |>  select(PFOS) |> filter(PFOS > 100)
+```
+
+## ggplot2
+
+See: <https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf>
+
+ggplot2 includes the general components:
+
+-   data
+
+-   mappings (aesthetics)
+
+-   geometric representation
+
+-   statistics
+
+-   facet
+
+-   coordinate space
+
+-   labels
+
+-   theme
+
+Example:
+
+This will produce similar plot as \@sec-baseRplots
+
+```{r}
+
+
+ggplot(data = PFAS_insects, mapping = aes(x = PFOA, y = PFOS)) +
+  geom_point(size = 2, colour = "black") + # add a scatter plot
+  geom_smooth(method = "lm", # uses the linear regression model
+              se = FALSE, # this will remove the confidence intervals
+              colour = "blue",
+              size = 2) +
+  geom_smooth(method = "loess",
+              se = FALSE,
+              colour = "red",
+              size = 2)
+
+```
+
+### NOT FINISHED
+
+We can add another geom by mapping again new variables (PFBS \~ PFOA)
+
+```{r}
+
+
+ggplot(data = PFAS_insects) +
+  geom_point(mapping = aes(x = PFOA, y = PFOS, size = PFOS), colour = "black") + 
+  geom_smooth(mapping = aes(x = PFOA, y = PFOS), 
+              method = "lm", 
+              se = FALSE, 
+              colour = "blue",
+              size = 2) +
+  geom_smooth(mapping = aes(x = PFOA, y = PFOS), 
+              method = "loess",
+              se = FALSE,
+              colour = "red",
+              size = 2) +
+  geom_point(mapping = aes(x = PFOA, y = PFBS, # new mapping
+                           size = PFBS), # size of points according to PFBS values
+             colour = "pink") + # colour outside of mappings 
+  theme_classic() # This theme will remove the background colours and lines
+```
+
+## pivot_longer
+
+See: <https://tidyr.tidyverse.org/reference/pivot_longer.html>
+
+```{r}
+
+PFAS_insects_long <- PFAS_insects %>% # shortcut for pipe Ctrl + shift + M
+  pivot_longer(cols = PFBA:sum_21PFAS, # select all columns from PFBA to sum_21PFAS
+               names_to = "PFAS", # name of the new column
+               values_to = "Conc") %>%  #name of the values from PFBA:sum_21PFAS
+  mutate(PFAS = as.factor(PFAS)) #make PFAS column a factor variable
+
+
+```
+
+
+```{r}
+#check the PFAS group names
+PFAS_insects_long |> group_by(PFAS) |> tally() |> view() 
+# select PFOS isomers
+PFOS_branched <- c("1-PFOS 419/169", "3/4/5-PFOS80/98.9")
+
+PFAS_insects_long |>
+  filter(Group != "Water") |> #remove all water samples to only include solid samples
+  filter(str_detect(PFAS, "sum_", negate = TRUE)) |> #remove all sum of PFAS using the argument: negate=TRUE 
+ggplot(aes(x = PFAS, y = Conc)) +
+  geom_point() +
+  geom_boxplot() +
+  theme_classic() +
+  ylab("Concentration of PFAS (ng/g) in solid samples")
+  
+
+```
