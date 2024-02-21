@@ -142,3 +142,24 @@ ggplot(aes(x = somePFAS, y = Conc)) +
   
 ```
 
+
+```{r}
+ggplot(data = PFAS_insects_long, aes(x = somePFAS, y = Conc)) +
+  geom_point(mapping = aes(color = ifelse(as.numeric(somePFAS) > 0.007, "red", "black"))) +
+  geom_boxplot() +
+  scale_color_identity() +  # Use scale_color_identity to override the default color mapping
+  theme_classic() +
+  ylab("Concentration of PFAS (ng/g) in solid samples")
+
+```
+
+```{r}
+ggplot(data = PFAS_insects_long, aes(x = somePFAS, y = Conc)) +
+  geom_point(mapping = aes(color = ifelse(as.numeric(somePFAS) < 0.007, "red", "black"))) +
+  geom_boxplot() +
+  scale_color_identity() +  # Use scale_color_identity to override the default color mapping
+  theme_classic() +
+  ylab("Concentration of PFAS (ng/g) in solid samples")
+```
+
+
