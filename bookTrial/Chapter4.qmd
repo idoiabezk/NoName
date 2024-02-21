@@ -34,4 +34,12 @@ ggplot(
   geom_point() +
   geom_smooth(method = "lm")
 ```
+```{r}
+ggplot(
+  data = Statistics_Kumla_20200408,
+  mapping = aes(x = ID, y = PFBA)
+) +
+  geom_point(mapping = aes(color = Group, shape = Group_Family)) +
+  geom_smooth(method = "lm")
+```
 
