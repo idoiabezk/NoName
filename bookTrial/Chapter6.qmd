@@ -4,10 +4,10 @@ editor_options:
   chunk_output_type: inline
 ---
 
-
 # Plotting with ggplot
 
-**This sixst chapter is some examples on how to plot and play around with the data.**
+**This fourd chapter is some examples on how to plot and play around with the data.**
+
 
 ## Basic plots:
 **Scatter plot: plot()**
