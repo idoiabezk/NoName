@@ -4,253 +4,99 @@ editor_options:
   chunk_output_type: inline
 ---
 
+# Data transformation
 
-# Plotting with ggplot
+**This fourd chapter summarizes some functions "that will help when"dplyr" functions.**
 
-**This fourd chapter is some examples on how to plot and play around with the data.**
+It is important to know that "dplyr" function overwrite other functions. In case that we want to use the basic functions we should use: "stats::filter()" and "stats::log()"; and if we want to precise which function of the package has the priority we can use: "packagename::functionname()".
 
-## Basic plots:
-**Scatter plot: plot()**
+The package "*tidyverse*" instead of "data frames", ituses "tibbes" that are a special type of data frames that allows to see a summary of the data. In case that we want to see all of the columns we should use "glimpse()".
 
-```{r}
+All the "dplyr" basic functions have three elements in common:
 
-# http://www.sthda.com/english/wiki/scatter-plots-r-base-graphs
+-   The first argument is always the data frame.
 
-plot(x = Statistics_Kumla_20200408$PFBA, y = Statistics_Kumla_20200408$PFOS, main = "PFBA vs PFOS concentrations",
-     xlab = "PFBA concentrations (ng/L)",
-     ylab = "PFOS concentrations (ng/L",
-     pch = 19) # choosing symbol for points in a graph (see ?pch for number/symbol) 
+-   The subsequent arguments refer to the columns that we want to operate on, and we refer to them by using the name of the variable.
 
-```
+-   The output is always a data frame.
 
-## ggplots:
+## The pipe " |> "
 
-```{r}
-library(tidyverse)
-ggplot(
-  data = Statistics_Kumla_20200408,
-  mapping = aes(x = PFBA, y = PFOS)
-) +
-  geom_point()
+Before getting into the different functions of "tidyverse", we need to describe the "pipe". The pipes takes what is on the left and passes it along to the function on the right. For example it is the same to write " x |> f(y)" and "f(x,y)". The pipe is very useful to combine different functions and to avoid creating new objects. 
 
-```
-## **BASIC PLOT:
+The short cut to add the pipe is "ctrl + shift + M".
 
-```{r}
-plot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
-     xlab = "PFOA concentrations (ng/L)",
-     ylab = "PFBA concentrations (ng/L",
-     pch = 19) + # choosing symbol for points in a graph (see ?pch for number/symbol)
+## "dplyr" funtion groups
 
-# We can add a regression line into the same graph
-abline(lm(Statistics_Kumla_20200408$PFOA ~ Statistics_Kumla_20200408$PFBA, data = Statistics_Kumla_20200408), col = "orange", lwd = 3) # lwd is the line width
+All the "dplyr" functions are organized in four groups based on what they operate on: rows, columns, groups and tables. All these functions will be used in examples in the next exercise.
 
-```
+### Rows:
 
-## ggplot:
+#### Filter ():
 
-```{r}
-ggplot(
-  data = Statistics_Kumla_20200408,
-  mapping = aes(x = PFOA, y = PFBA)
-) +
-  geom_point() +
-  geom_smooth(method = "lm", # uses the linear regression model
-              se = FALSE, # this will remove the confidence intervals
-              colour = "orange",
-              size = 2) +
-   theme_test()
-```
-## **BASIC PLOT**: 
-```{r}
-plot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
-     xlab = "PFOA concentrations (ng/L)",
-     ylab = "PFBA concentrations (ng/L",
-     pch = 19) + # choosing symbol for points in a graph (see ?pch for number/symbol)
-# as well as a loess fit
-lines(lowess(Statistics_Kumla_20200408$PFBA, Statistics_Kumla_20200408$PFOA), col = "green", lwd = 3)
+Changes **which rows are present** without changing the order of the rows. It allows to keep rows based on the values of the columns.
 
-# to clear the graphics from the Plots pane, use graphics.off() in the script or dev.off() in the console
- 
-```
-## **ggplt**:
-```{r}
-ggplot(
-  data = Statistics_Kumla_20200408,
-  mapping = aes(x = PFOA, y = PFBA)
-) +
-  geom_point() +
-  geom_smooth(method = "loess",
-              se = FALSE,
-              colour = "green",
-              size = 2) +
-  theme_test()
-```
+Note that "=" does not mean equal to, if we want to input equal to we need to write "==".
 
-## BASIC PLOT:
+#### Arrange ():
 
-**Bar plots: barplot()**
+Changes **the order of the rows** without changing which ones are present. Note that it does it based on the values of the columns. When input more than one columns, the function will operate based on the order that we write them.
 
-```{r}
-groupsPFOS <- Statistics_Kumla_20200408[, c("Group", "PFOS")] # subset two variables from the dataframe
-groupsPFOS$Group <- as.factor(groupsPFOS$Group)
-barplot(height = Statistics_Kumla_20200408$PFOS)
+We can use "desc()" on a column inside of "arrage()" to reorder the data frame based on the values in that column from the biggest to the smallest.
 
-```
+#### Distinct ():
 
-**Box plots: boxplot()**
+Finds rows with unique values and can also modify the columns.
 
-```{r}
+If we want to keep other columns when filtering unique rows, we can use "keep_all = TRUE". If we use "sort = TRUE" will arrange them in desceding roder.
 
-# Box plot of one variable
-boxplot(Statistics_Kumla_20200408$PFBS)
+### Columns:
 
+#### Mutate ():
 
-```
+Creates more columns that are derived from the original ones. It will add the new variables at the right of the ones that we already had, if we want at the left we need to write: ".before", and if we want them before and after: ".after". Also we need to include ".keep" for these ones that we want to keep.
 
+#### Select ():
 
-```{r}
-ggplot(
-  data = Statistics_Kumla_20200408,
-  mapping = aes(x = ID, y = PFBA, color = Group)
-) +
-  geom_point()
-```
-```{r}
-ggplot(
-  data = Statistics_Kumla_20200408,
-  mapping = aes(x = ID, y = PFBA, color = Group)
-) +
-  geom_point() +
-  geom_smooth(method = "lm")
-```
-```{r}
-ggplot(
-  data = Statistics_Kumla_20200408,
-  mapping = aes(x = ID, y = PFBA)
-) +
-  geom_point(mapping = aes(color = Group, shape = Group_Family)) +
-  geom_smooth(method = "lm")
-```
+Changes which columns are present, it acts like "zooming" in a variable. We have different ways how we can select the columns: - By the name of the column - All the columns between 2 columns: "nameColumnA:nameColumnB" - All the columns except some: "!nameColumnA:nameColumnB" - The columns that the same type such as, numeric, or characters
 
-```{r}
+#### Rename ():
 
-ggplot(data = Statistics_Kumla_20200408, mapping = aes(x = PFOA, y = PFBA)) +
-  geom_point(size = 2, colour = "black") + # add a scatter plot
-  geom_smooth(method = "lm", # uses the linear regression model
-              se = TRUE, # this will remove the confidence intervals
-              colour = "orange",
-              size = 2) +
-  geom_smooth(method = "loess",
-              se = TRUE,
-              colour = "green",
-              size = 2)
-```
+Changes the name of the column. We can easily clean the names of the column by: "janitor::clean_names()".
 
-```{r}
+#### Relocate ():
 
-ggplot(data = Statistics_Kumla_20200408, mapping = aes(x = PFOA, y = PFOS)) +
-  geom_point(size = 2, colour = "black") + # add a scatter plot
-  geom_smooth(method = "lm", # uses the linear regression model
-              se = FALSE, # this will remove the confidence intervals
-              colour = "orange",
-              size = 2) +
-  geom_smooth(method = "loess",
-              se = FALSE,
-              colour = "green",
-              size = 2)
-```
+Changes the position of the columns.
 
-```{r}
-Statistics_Kumla_20200408 |>  select(Year, PFOA) |> filter(Year== 2017)
-```
+### Groups:
 
+#### Group_by ():
 
+To divide the data set into groups that are mean full for the analysis.
 
-```{r}
-ggplot(data = Statistics_Kumla_20200408) +
-  geom_point(mapping = aes(x = PFOA, y = PFBA, size = PFOS), colour = "black") 
-```
+#### Summaryze ():
 
-```{r}
-ggplot(data = Statistics_Kumla_20200408) +
- geom_point(mapping = aes(x = PFOA, y = PFBA, size = PFOS), colour = "black") +  
-  scale_size_continuous(
-    name = "PFOS Description",
-    breaks = c(10, 50, 100, 500, 1000),  # Adjust the breaks to include more values
-    labels = c("10", "50", "100", "500", "1000")  # Adjust labels accordingly
-  )
-```
+To calculate a single summary statistics. It reduces the data frame to have a single row for each group. If we want to know number of rows are taken for each group we can use "n()#.
 
+#### Slice ():
 
-```{r}
-ggplot(data = Statistics_Kumla_20200408) +
- geom_point(mapping = aes(x = PFOA, y = PFBA, size = PFOS), colour = "black") +
-  scale_size_continuous(
-    name = "PFOS Description",
-    breaks = c(10, 50, 100, 500, 1000),  # Adjust the breaks to include more values
-    labels = c("10", "50", "100", "500", "1000")  # Adjust labels accordingly
-  ) +
-  geom_smooth(mapping = aes(x = PFOA, y = PFOS), 
-              method = "lm", 
-              se = FALSE, 
-              colour = "orange",
-              size = 2) +
-  geom_smooth(mapping = aes(x = PFOA, y = PFOS), 
-              method = "loess",
-              se = FALSE,
-              colour = "green",
-              size = 2) +
-  geom_point(mapping = aes(x = PFOA, y = PFBS, # new mapping
-                           size = PFBS), # size of points according to PFBS values
-             colour = "purple") + # colour outside of mappings 
-  theme_classic() # This theme will remove the background colours and lines
-```
+This function allows us to extract specific rows within each group:
 
-```{r}
-PFAS_insects_long <- Statistics_Kumla_20200408 %>% # shortcut for pipe Ctrl + shift + M
-  pivot_longer(cols = PFBA:PFOA, # select all columns from PFBA to sum_21PFAS
-               names_to = "somePFAS", # name of the new column
-               values_to = "Conc") %>%  #name of the values from PFBA:sum_21PFAS
-  mutate(somePFAS = as.factor(somePFAS)) #make PFAS column a factor variable
-```
+-   "df \|\> slice\_ head (n =1)" Takes the first row of each group
 
-```{r}
-#check the PFAS group names
-PFAS_insects_long |> group_by(somePFAS) |> tally() |> view() 
-# select PFOS isomers
-PFOS_branched <- c("1-PFOS 419/169", "3/4/5-PFOS80/98.9")
+-   "df \|\> slice\_ tail (n =1)" Takes the last row of each group
 
-PFAS_insects_long |>
-  filter(Group != "Water") |> #remove all water samples to only include solid samples
-  filter(str_detect(somePFAS, "sum_", negate = TRUE)) |> #remove all sum of PFAS using the argument: negate=TRUE 
-ggplot(aes(x = somePFAS, y = Conc)) +
-  geom_point() +
-  geom_boxplot() +
-  theme_classic() +
-  ylab("Concentration of PFAS (ng/g) in solid samples")
-  
-```
+-   "df \|\> slice\_ min (x, n =1)" Takes the row the smallest value of x.
 
+-   "df \|\> slice\_ max (x, n =1)" Takes the row the biggest value of x.
 
-```{r}
-PFAS_insects_long |> mutate(Color = ifelse(Conc > 50, "orange", "black")) |> 
-ggplot(aes(x = somePFAS, y = Conc)) +
-  geom_point(color = Color) +
-  geom_boxplot() + #ifelse(test, yes, no)
-  scale_color_identity() +  # Use scale_color_identity to override the default color mapping
-  theme_classic() +
-  ylab("Concentration of PFAS (ng/g) in solid samples")
+-   "df \|\> slice\_ sample (n =1)" Takes a random row. If we write "n=1" it will give us one row, but if we can more we can write another number; we can also write "prop =0.1" and this will give us the %10 of the rows.
 
-```
+#### Grouping by multiple variables ():
+Creates groups using more than one variables.
 
-```{r}
-ggplot(data = PFAS_insects_long, aes(x = somePFAS, y = Conc)) +
-  geom_point(color = ifelse(as.numeric(somePFAS) < 0.007, "orange", "black")) +
-  #geom_boxplot() +
-  #scale_color_identity() +  # Use scale_color_identity to override the default color mapping
-  theme_classic() +
-  ylab("Concentration of PFAS (ng/g) in solid samples")
-```
+#### Ungrouping:
+We can use "ungroup()" to remove some grouping.
 
-
+#### ".by" ():
+"group_by()" and "ungroup()" are not groing away.
