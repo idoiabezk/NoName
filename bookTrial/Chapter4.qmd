@@ -9,15 +9,105 @@ editor_options:
 
 **This fourd chapter is some examples on how to plot and play around with the data.**
 
+## Basic plots:
+**Scatter plot: plot()**
+
+```{r}
+
+# http://www.sthda.com/english/wiki/scatter-plots-r-base-graphs
+
+plot(x = Statistics_Kumla_20200408$PFBA, y = Statistics_Kumla_20200408$PFOS, main = "PFBA vs PFOS concentrations",
+     xlab = "PFBA concentrations (ng/L)",
+     ylab = "PFOS concentrations (ng/L",
+     pch = 19) # choosing symbol for points in a graph (see ?pch for number/symbol) 
+
+```
+
+## ggplots:
+
 ```{r}
 library(tidyverse)
 ggplot(
   data = Statistics_Kumla_20200408,
-  mapping = aes(x = ID, y = PFBA)
+  mapping = aes(x = PFBA, y = PFOS)
 ) +
   geom_point()
 
 ```
+## **BASIC PLOT:
+
+```{r}
+plot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
+     xlab = "PFOA concentrations (ng/L)",
+     ylab = "PFBA concentrations (ng/L",
+     pch = 19) + # choosing symbol for points in a graph (see ?pch for number/symbol)
+
+# We can add a regression line into the same graph
+abline(lm(Statistics_Kumla_20200408$PFOA ~ Statistics_Kumla_20200408$PFBA, data = Statistics_Kumla_20200408), col = "orange", lwd = 3) # lwd is the line width
+
+```
+
+## ggplot:
+
+```{r}
+ggplot(
+  data = Statistics_Kumla_20200408,
+  mapping = aes(x = PFOA, y = PFBA)
+) +
+  geom_point() +
+  geom_smooth(method = "lm", # uses the linear regression model
+              se = FALSE, # this will remove the confidence intervals
+              colour = "orange",
+              size = 2) +
+   theme_test()
+```
+## **BASIC PLOT**: 
+```{r}
+plot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
+     xlab = "PFOA concentrations (ng/L)",
+     ylab = "PFBA concentrations (ng/L",
+     pch = 19) + # choosing symbol for points in a graph (see ?pch for number/symbol)
+# as well as a loess fit
+lines(lowess(Statistics_Kumla_20200408$PFBA, Statistics_Kumla_20200408$PFOA), col = "green", lwd = 3)
+
+# to clear the graphics from the Plots pane, use graphics.off() in the script or dev.off() in the console
+ 
+```
+## **ggplt**:
+```{r}
+ggplot(
+  data = Statistics_Kumla_20200408,
+  mapping = aes(x = PFOA, y = PFBA)
+) +
+  geom_point() +
+  geom_smooth(method = "loess",
+              se = FALSE,
+              colour = "green",
+              size = 2) +
+  theme_test()
+```
+
+## BASIC PLOT:
+
+**Bar plots: barplot()**
+
+```{r}
+groupsPFOS <- Statistics_Kumla_20200408[, c("Group", "PFOS")] # subset two variables from the dataframe
+groupsPFOS$Group <- as.factor(groupsPFOS$Group)
+barplot(height = Statistics_Kumla_20200408$PFOS)
+
+```
+
+**Box plots: boxplot()**
+
+```{r}
+
+# Box plot of one variable
+boxplot(Statistics_Kumla_20200408$PFBS)
+
+
+```
+
 
 ```{r}
 ggplot(
@@ -144,9 +234,10 @@ ggplot(aes(x = somePFAS, y = Conc)) +
 
 
 ```{r}
-ggplot(data = PFAS_insects_long, aes(x = somePFAS, y = Conc)) +
-  geom_point(mapping = aes(color = ifelse(as.numeric(somePFAS) > 0.007, "red", "black"))) +
-  geom_boxplot() +
+PFAS_insects_long |> mutate(Color = ifelse(Conc > 50, "orange", "black")) |> 
+ggplot(aes(x = somePFAS, y = Conc)) +
+  geom_point(color = Color) +
+  geom_boxplot() + #ifelse(test, yes, no)
   scale_color_identity() +  # Use scale_color_identity to override the default color mapping
   theme_classic() +
   ylab("Concentration of PFAS (ng/g) in solid samples")
@@ -155,9 +246,9 @@ ggplot(data = PFAS_insects_long, aes(x = somePFAS, y = Conc)) +
 
 ```{r}
 ggplot(data = PFAS_insects_long, aes(x = somePFAS, y = Conc)) +
-  geom_point(mapping = aes(color = ifelse(as.numeric(somePFAS) < 0.007, "red", "black"))) +
-  geom_boxplot() +
-  scale_color_identity() +  # Use scale_color_identity to override the default color mapping
+  geom_point(color = ifelse(as.numeric(somePFAS) < 0.007, "orange", "black")) +
+  #geom_boxplot() +
+  #scale_color_identity() +  # Use scale_color_identity to override the default color mapping
   theme_classic() +
   ylab("Concentration of PFAS (ng/g) in solid samples")
 ```

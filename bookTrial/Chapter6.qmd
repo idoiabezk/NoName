@@ -9,6 +9,48 @@ editor_options:
   chunk_output_type: console
 ---
 
+Base R plots are those functions that come with the R version. Additional packages that are easier to handle and have more advanced features will be demonstrated later.
+
+**Scatter plot: plot()**
+
+```{r}
+
+# http://www.sthda.com/english/wiki/scatter-plots-r-base-graphs
+
+plot(x = PFAS_insects$PFOA, y = PFAS_insects$PFOS, main = "PFOA vs PFOS concentrations",
+     xlab = "PFOA concentrations (ng/L)",
+     ylab = "PFOS concentrations (ng/L",
+     pch = 19) # choosing symbol for points in a graph (see ?pch for number/symbol) 
+
+# We can add a regression line into the same graph
+abline(lm(PFAS_insects$PFOS ~ PFAS_insects$PFOA, data = PFAS_insects), col = "blue", lwd = 3) # lwd is the line width
+
+# as well as a loess fit
+lines(lowess(PFAS_insects$PFOA, PFAS_insects$PFOS), col = "red", lwd = 3)
+
+# to clear the graphics from the Plots pane, use graphics.off() in the script or dev.off() in the console
+ 
+```
+
+**Bar plots: barplot()**
+
+```{r}
+groupsPFOS <- PFAS_insects[, c("Group", "PFOS")] # subset two variables from the dataframe
+groupsPFOS$Group <- as.factor(groupsPFOS$Group)
+barplot(height = PFAS_insects$PFOS)
+
+```
+
+**Box plots: boxplot()**
+
+```{r}
+
+# Box plot of one variable
+boxplot(PFAS_insects$PFBS)
+
+
+```
+
 ```{r}
 #| echo: false
 #| warning: false
