@@ -4,9 +4,9 @@ editor_options:
   chunk_output_type: inline
 ---
 
-# Plotting with ggplot
+# Exercise 1: Data plotting and transformations
 
-**This sixth chapter is some examples of how to plot and play around with the data.**
+**This sixth chapter is some examples of how to plot and play around with the data. Most of the descriptions of the code are presented as comments in the chunks.**
 
 ## Basic and ggaplot2 plots:
 
@@ -63,7 +63,7 @@ ggplot(
    theme_test()
 ```
 
-## **BASIC PLOT**:
+**Scatter plot + loess fit line: using plot()**
 
 ```{r}
 plot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
@@ -77,7 +77,7 @@ lines(lowess(Statistics_Kumla_20200408$PFBA, Statistics_Kumla_20200408$PFOA), co
  
 ```
 
-## **ggplt**:
+**Scatter plot + loess fit line: using ggplot**
 
 ```{r}
 ggplot(
@@ -92,9 +92,8 @@ ggplot(
   theme_test()
 ```
 
-## BASIC PLOT:
 
-**Bar plots: barplot()**
+**Bar plots: using barplot()**
 
 ```{r}
 groupsPFOS <- Statistics_Kumla_20200408[, c("Group", "PFOS")] # subset two variables from the dataframe
@@ -103,7 +102,12 @@ barplot(height = Statistics_Kumla_20200408$PFOS)
 
 ```
 
-**Box plots: boxplot()**
+**Bar plots: using ggplot**
+```{r}
+missing
+```
+
+**Box plots: using boxplot()**
 
 ```{r}
 
@@ -112,6 +116,14 @@ boxplot(Statistics_Kumla_20200408$PFBS)
 
 
 ```
+
+**Box plots: using ggplot**
+
+```{r}
+missing
+```
+
+## More advanced plot using ggaplot2:
 
 ```{r}
 ggplot(
@@ -209,6 +221,8 @@ ggplot(data = Statistics_Kumla_20200408) +
              colour = "purple") + # colour outside of mappings 
   theme_classic() # This theme will remove the background colours and lines
 ```
+
+## Data transformation for ggplot plotting:
 
 ```{r}
 PFAS_insects_long <- Statistics_Kumla_20200408 %>% # shortcut for pipe Ctrl + shift + M
