@@ -6,11 +6,11 @@ editor_options:
 
 # Plotting with ggplot
 
-**This fourd chapter is some examples on how to plot and play around with the data.**
+**This sixth chapter is some examples of how to plot and play around with the data.**
 
+## Basic and ggaplot2 plots:
 
-## Basic plots:
-**Scatter plot: plot()**
+**Scatter plot: using plot()**
 
 ```{r}
 
@@ -23,7 +23,7 @@ plot(x = Statistics_Kumla_20200408$PFBA, y = Statistics_Kumla_20200408$PFOS, mai
 
 ```
 
-## ggplots:
+**Scatter plot: ggplot2**
 
 ```{r}
 library(tidyverse)
@@ -34,7 +34,8 @@ ggplot(
   geom_point()
 
 ```
-## **BASIC PLOT:
+
+**Scatter plot + regression line: using plot()**
 
 ```{r}
 plot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
@@ -47,7 +48,7 @@ abline(lm(Statistics_Kumla_20200408$PFOA ~ Statistics_Kumla_20200408$PFBA, data 
 
 ```
 
-## ggplot:
+**Scatter plot + regression line: using ggplot**
 
 ```{r}
 ggplot(
@@ -61,7 +62,9 @@ ggplot(
               size = 2) +
    theme_test()
 ```
-## **BASIC PLOT**: 
+
+## **BASIC PLOT**:
+
 ```{r}
 plot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
      xlab = "PFOA concentrations (ng/L)",
@@ -73,7 +76,9 @@ lines(lowess(Statistics_Kumla_20200408$PFBA, Statistics_Kumla_20200408$PFOA), co
 # to clear the graphics from the Plots pane, use graphics.off() in the script or dev.off() in the console
  
 ```
+
 ## **ggplt**:
+
 ```{r}
 ggplot(
   data = Statistics_Kumla_20200408,
@@ -108,7 +113,6 @@ boxplot(Statistics_Kumla_20200408$PFBS)
 
 ```
 
-
 ```{r}
 ggplot(
   data = Statistics_Kumla_20200408,
@@ -116,6 +120,7 @@ ggplot(
 ) +
   geom_point()
 ```
+
 ```{r}
 ggplot(
   data = Statistics_Kumla_20200408,
@@ -124,6 +129,7 @@ ggplot(
   geom_point() +
   geom_smooth(method = "lm")
 ```
+
 ```{r}
 ggplot(
   data = Statistics_Kumla_20200408,
@@ -165,8 +171,6 @@ ggplot(data = Statistics_Kumla_20200408, mapping = aes(x = PFOA, y = PFOS)) +
 Statistics_Kumla_20200408 |>  select(Year, PFOA) |> filter(Year== 2017)
 ```
 
-
-
 ```{r}
 ggplot(data = Statistics_Kumla_20200408) +
   geom_point(mapping = aes(x = PFOA, y = PFBA, size = PFOS), colour = "black") 
@@ -181,7 +185,6 @@ ggplot(data = Statistics_Kumla_20200408) +
     labels = c("10", "50", "100", "500", "1000")  # Adjust labels accordingly
   )
 ```
-
 
 ```{r}
 ggplot(data = Statistics_Kumla_20200408) +
@@ -231,7 +234,6 @@ ggplot(aes(x = somePFAS, y = Conc)) +
   ylab("Concentration of PFAS (ng/g) in solid samples")
   
 ```
-
 
 ```{r}
 PFAS_insects_long |> mutate(Color = ifelse(Conc > 50, "orange", "black")) |> 
