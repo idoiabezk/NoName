@@ -22,5 +22,7 @@ The different sections in the book include:
 
 -   **Chapter 6:** Exercise 1
 
+-   **Chapter 7:** Project
+
 
 

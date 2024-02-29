@@ -1,0 +1,71 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Project
+
+**The main objective of this project is to automatize the workflow of the data treatment for the quantification of Polychlorianted alkanes (PCAs).**
+
+## Correct the instrumental with the internal standard (IS):
+
+```{r}
+rm(list = ls())
+library(dplyr)
+IS <- GC_qToF_CPsFoodResults %>% 
+  pivot_longer(cols = c(`Molecule List`, Area), # select all columns from PFBA to sum_21PFAS
+               names_to = "IS", # name of the new column
+               values_to = "Area") %>%  #name the values
+  mutate(IS = ifelse(`Molecule List` == "IS", `Molecule List`, NA)) #make the new column with only the IS
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+GC_qToF_CPsFoodResults <- GC_qToF_CPsFoodResults %>%
+  mutate(Area = case_when(`Molecule List` == "IS" ~ Area,
+                          TRUE ~ NA_real_))
+
+```
+
+```{r}
+GC_qToF_CPsFoodResults2 <- GC_qToF_CPsFoodResults %>% # shortcut for pipe Ctrl + shift + M
+  pivot_longer(cols = c(`Replicate Name`, `Molecule List`, Area), # select all columns from PFBA to sum_21PFAS
+               names_to = "IS", # name of the new column
+               values_to = "Area")%>%  #name of the values from PFBA:sum_21PFAS
+  mutate(IS = as.factor(ifelse(`Molecule List` == "IS"))) #make PFAS column a factor variable
+```
+```{r}
+GC_qToF_CPsFoodResults2 <- GC_qToF_CPsFoodResults %>%
+  pivot_longer(cols = c(`Molecule List`, Area),  # Exclude `Molecule List` column from pivoting
+               names_to = "IS", 
+               values_to = "Area") %>%
+  mutate(IS = ifelse(`Molecule List` == "IS", as.factor(`Molecule List`), NA))
+```
+
+```{r}
+GC_qToF_CPsFoodResults2 <- GC_qToF_CPsFoodResults %>% 
+  select(where(is.numeric)) %>%  # Select only numeric columns
+  pivot_longer(cols = -c(`Molecule List`, Area),  # Exclude non-numeric and specific columns from pivoting
+               names_to = "IS",
+               values_to = "Area")
+```
+
+```{r}
+#check the PFAS group names
+IS <-GC_qToF_CPsFoodResults |> group_by(`Molecule List`) |> tally() |> filter(`Molecule List` == "IS")  #Slect only the IS 
+IS <- IS %>% 
+pivot_longer(cols = c(IS:Area), # select all columns from PFBA to sum_21PFAS
+               names_to = "IS", # name of the new column
+               values_to = "Area")
+  
+ class(IS) 
+  
+  
+  filter(str_detect(somePFAS, "sum_", negate = TRUE)) |> #remove all sum of PFAS using the argument: negate=TRUE 
+  
+  
+```
+
