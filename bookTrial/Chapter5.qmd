@@ -28,16 +28,16 @@ We say that we have tidy data when: - Each variable is a column, and each column
 
 ## Widering data:
 
-"pivot_longer()" increases the columns and reduces the rows. It helps when an observation is spread across multiple rows. For using it we need to provide where to take the data from: 
+"pivot_longer()" increases the columns and reduces the rows. It helps when an observation is spread across multiple rows. For using it we need to provide where to take the data from:
 
--  "names_from = ajfdkl"
+-   "names_from = ajfdkl"
 
--  "values_from = adkfdofjio"
+-   "values_from = adkfdofjio"
 
--  "id_cols = iadjoid"
+-   "id_cols = iadjoid"
 
 ## Other useful functions:
 
--  "parse_number()" will extract the first number of a string and ignore the text.
+-   "parse_number()" will extract the first number of a string and ignore the text.
 
--  "names_sep = "_"" will allow us to extract some information from a name and make it a variable. 
+-   "names_sep ="\_"" will allow us to extract some information from a name and make it a variable.

@@ -1,7 +1,7 @@
 ---
 output: html_document
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 # Project
@@ -9,6 +9,13 @@ editor_options:
 **The main objective of this project is to automatize the workflow of the data treatment for the quantification of Polychlorianted alkanes (PCAs).**
 
 ## Correct the instrumental with the internal standard (IS):
+```{r}
+GC_qToF_CPsFoodResults |> 
+  mutate(CorrectedArea = case_when(`Molecule List`== "IS"))
+  group_by(`Replicate Name`, `Molecule List`) |> 
+  tally()
+
+```
 
 ```{r}
 rm(list = ls())
@@ -16,8 +23,10 @@ library(dplyr)
 IS <- GC_qToF_CPsFoodResults %>% 
   pivot_longer(cols = c(`Molecule List`, Area), # select all columns from PFBA to sum_21PFAS
                names_to = "IS", # name of the new column
-               values_to = "Area") %>%  #name the values
-  mutate(IS = ifelse(`Molecule List` == "IS", `Molecule List`, NA)) #make the new column with only the IS
+               values_to = "Area")   #name the values
+ 
+  
+   mutate(IS = ifelse(`Molecule List` == "IS", `Molecule List`, NA)) #make the new column with only the IS
 ```
 
 ```{r}
