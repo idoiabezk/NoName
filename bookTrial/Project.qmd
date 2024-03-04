@@ -10,8 +10,18 @@ editor_options:
 
 ## Correct the instrumental with the internal standard (IS):
 ```{r}
-GC_qToF_CPsFoodResults |> 
-  mutate(CorrectedArea = case_when(`Molecule List`== "IS"))
+GC_qToF_CPsFoodResults3 <- GC_qToF_CPsFoodResults |> 
+  filter(Quantitative == "YES") |> 
+  pivot_wider(id_cols = `Replicate Name`,
+              names_from = Molecule, # name of the new column
+              values_from = Area,
+              values_fn = list)       #name of the values from PFBA:sum_21PFAS
+GC_qToF_CPsFoodResults3$C9H17Cl3 = as.numeric(GC_qToF_CPsFoodResults3$C9H17Cl3)
+GC_qToF_CPsFoodResults3$C9H16Cl4 = as.numeric(GC_qToF_CPsFoodResults3$C9H16Cl4)
+
+  CorrectedArea = GC_qToF_CPsFoodResults3$C9H17Cl3/GC_qToF_CPsFoodResults3$C9H16Cl4 
+print(CorrectedArea)
+
   group_by(`Replicate Name`, `Molecule List`) |> 
   tally()
 
