@@ -9,25 +9,59 @@ editor_options:
 **The main objective of this project is to automatize the workflow of the data treatment for the quantification of Polychlorianted alkanes (PCAs).**
 
 ## Correct the instrumental with the internal standard (IS):
+
 ```{r}
+#Load the libraries
 library(dplyr)
 library(tidyr)
-rm(list = ls()) #Clean the environment
-GC_qToF_CPsFoodResults3 <- GC_qToF_CPsFoodResults |>  #Wide the data so each sample is in one row
+
+#Clean the environment
+rm(list = ls()) 
+
+#Wide the data so each sample is in one row
+GC_qToF_CPsFoodResults3 <- GC_qToF_CPsFoodResults |>  
   filter(Quantitative == "YES") |> 
   pivot_wider(id_cols = `Replicate Name`,
               names_from = Molecule, # name of the new column
               values_from = Area, #name of the values for the new columns
               values_fn = list) #data type       
+
+#Make the data in the data frame numeric
 pattern <- "^C\\d+" # This pattern matches column names starting with "C" followed by numbers
 GC_qToF_CPsFoodResults3 <- mutate_at(GC_qToF_CPsFoodResults3, vars(matches(pattern)), as.numeric) # Apply as.numeric() to columns matching the pattern
-GC_qToF_CPsFoodResults3$IS = as.numeric(GC_qToF_CPsFoodResults3$IS)# Define the IS as numeric  
+GC_qToF_CPsFoodResults3$IS = as.numeric(GC_qToF_CPsFoodResults3$IS)# Define the IS as numeric 
+
+#Divide the area of the homologues by the IS
 CorrectedArea <- mutate_at(GC_qToF_CPsFoodResults3, vars(matches(pattern)), 
                            ~ . / GC_qToF_CPsFoodResults3$IS) #It will now do it for all the columns that have the pattern (start the name with "C")
-print(CorrectedArea)
+
+```
+
+## Calculate the recovery
+
+```{r}
+# Define the RS as numeric
+GC_qToF_CPsFoodResults3$RS = as.numeric(GC_qToF_CPsFoodResults3$RS) 
+
+#Dividing the IS by RS
+Recovery <- mutate(GC_qToF_CPsFoodResults3, GC_qToF_CPsFoodResults3$IS / GC_qToF_CPsFoodResults3$RS) 
+
+#The recovery in %
+RecoveryPercentage <- mutate_at(Recovery, vars(matches(pattern)), 
+                           ~ . *100) 
+```
 
 
+## Prepare the single chain standards
+
+```{r}
+#Response factor of each homologue per 1 ng/µL
+
+#=ROUND(SLOPE(INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MAX(N4:U4);N4:U4;0));TRUE);INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MAX(N4:U4);N4:U4;0));TRUE));0)
+############Note: N4:U4 are the values of the corrected peak are of the standards
 
 
+#The result from the previous row to this one
+#=IF(ISERROR(W4);0;W4)
 ```
 
