@@ -263,49 +263,51 @@ df1
 
 Logical tests refer to evaluating an expression to determine whether it is true or false, here are some of the most used logical operators:
 
--   *">"*: is it greater than? 
--  *">=*: is it greater or equal than?
--   *"<"*: is it less than? 
--  *"<=*: is it less or equal than? 
--  *"==*: is it equal to? 
--  *"!=*: is not equal to? 
--  *"%in%*: is it in the group? 
+-   *"\>"*: is it greater than?
+-   *"\>=*: is it greater or equal than?
+-   *"\<"*: is it less than?
+-   *"\<=*: is it less or equal than?
+-   *"==*: is it equal to?
+-   *"!=*: is not equal to?
+-   *"%in%*: is it in the group?
 
 Some examples:
+
 ```{r}
 3<2 #is 3 less than 2?
 ```
+
 ```{r}
 3 %in% c(1,2,3) #is 3 in the vector that is in the right?
 ```
+
 ```{r}
 c(1,2,3)%in%c(3,4,5) #%in% doesn't do element-wise execution, it will provide is the values of the vector to the left are any of the values of the vector to the right
 ```
 
-
 ### **Boolean operators**
 
-The boolean operators "&" and "|" collapse the results of multiple logical tests into a sinlge TRUE or FALSE, for example:
+The boolean operators "&" and "\|" collapse the results of multiple logical tests into a sinlge TRUE or FALSE, for example:
+
 ```{r}
 cond1<-2<3
 cond2<-3<3
 cond1&cond2 #are "cond1" and "cond2" true?
 ```
+
 Here are some of the most used boolean operators:
 
--   *"&"*: are both true? 
--  *"|"*: is of them true?
--   *"xor"*: is exactly one of them true? 
--  *"!"*: is it false? (might be uselful for flipping a condition, for example with !is.na())
--  *"any"*: are any of these conditions true? 
--  *"all"*: are all of them true? 
- 
+-   *"&"*: are both true?
+-   *"\|"*: is of them true?
+-   *"xor"*: is exactly one of them true?
+-   *"!"*: is it false? (might be uselful for flipping a condition, for example with !is.na())
+-   *"any"*: are any of these conditions true?
+-   *"all"*: are all of them true?
 
 ### **Missing information**
-When we miss some information R will display "NA" which means "Not Available"
-For removing the "NA2s we can use: na.rm = TRUE
-If what we want does not have the "na.rm" we could use: vector[!is.na()], so it will take everything that is not NA. 
+
+When we miss some information R will display "NA" which means "Not Available" For removing the "NA2s we can use: na.rm = TRUE If what we want does not have the"na.rm" we could use: vector\[!is.na()\], so it will take everything that is not NA.
 
 ## **Environments**
 
-Environments refer to the spaces where objects (such as variables, functions, etc.) are created and stored during an R session. 
+Environments refer to the spaces where objects (such as variables, functions, etc.) are created and stored during an R session.

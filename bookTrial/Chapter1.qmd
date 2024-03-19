@@ -141,9 +141,8 @@ ana <- function(b2){
 }
 ana (b2 = 1:4) #Here we define what "b2" is and Rstudio can run the function "ana()" for it
 ```
-?apply 
-#Note for myself: look it up 
-### *Packages*
+
+?apply #Note for myself: look it up \### *Packages*
 
 We can build up our own functions, but can also use these that other people have already coded. For this, we have to install **packages** and load their **libraries**. A package is a collection of R functions, data sets, and compiled code in a well-defined format, while a library refers to a directory where installed packages are stored on your computer. When you install a package, its files are copied to a specific location on your system. This location is referred to as the library. So, depending on our aim we will install different packages and load their libraries. Note that we only need to install a package once, but we need to load its library every R session we want to use it.
 

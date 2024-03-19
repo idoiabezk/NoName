@@ -23,8 +23,8 @@ GC_qToF_CPsFoodResults3 <- GC_qToF_CPsFoodResults |>
   filter(Quantitative == "YES") |> 
   pivot_wider(id_cols = `Replicate Name`,
               names_from = Molecule, # name of the new column
-              values_from = Area, #name of the values for the new columns
-              values_fn = list) #data type       
+              values_from = Area #name of the values for the new columns
+             ) #data type       
 
 #Make the data in the data frame numeric
 pattern <- "^C\\d+" # This pattern matches column names starting with "C" followed by numbers
@@ -46,9 +46,16 @@ GC_qToF_CPsFoodResults3$RS = as.numeric(GC_qToF_CPsFoodResults3$RS)
 #Dividing the IS by RS
 Recovery <- mutate(GC_qToF_CPsFoodResults3, GC_qToF_CPsFoodResults3$IS / GC_qToF_CPsFoodResults3$RS) 
 
+Recovery[Recovery$column_name == some_condition, "column_name"]
+
+STD <- average(Recovery$v)
 #The recovery in %
 RecoveryPercentage <- mutate_at(Recovery, vars(matches(pattern)), 
                            ~ . *100) 
+```
+
+```{r}
+Recovery <- mutate(GC_qToF_CPsFoodResults3, GC_qToF_CPsFoodResults3$IS / GC_qToF_CPsFoodResults3$RS)
 ```
 
 
@@ -57,6 +64,30 @@ RecoveryPercentage <- mutate_at(Recovery, vars(matches(pattern)),
 ```{r}
 #Response factor of each homologue per 1 ng/µL
 
+#For having the same display as in the Excel sheet we first need to transpose our data frame:
+
+t_CorrectedArea <- t(CorrectedArea)
+minC9Cl3<- min(t_CorrectedArea["C9H17Cl3", c('V8', 'V9', 'V10', 'V11')])
+minC9Cl3 
+###########ERROR: it does not find the column names
+
+#Maybe I can fo it without transposing?
+
+minC9Cl3<- min(CorrectedArea[c('9_48_1', '9_48_2', '9_48_3', '9_48_4'), "C9H17Cl3"]) #min for C9H17Cl3 in the standard
+minC9Cl3
+
+maxC9Cl3<- max(CorrectedArea[c('9_48_1', '9_48_2', '9_48_3', '9_48_4'), "C9H17Cl3"]) #max for C9H17Cl3 in the standard
+maxC9Cl3
+
+####################ERROR: gives NA as the results 
+
+class(CorrectedArea$C9H17Cl3) #Checking if the values are defined as numeric: yes they are :(
+
+filtered_data <- CorrectedArea[complete.cases(CorrectedArea[c('9_48_1', '9_48_2', '9_48_3', '9_48_4'), "C9H17Cl3"]), ]
+
+class(CorrectedArea$C9H17Cl3)
+
+Min<- min(GC_qToF_CPsFoodResults3$IS)
 #=ROUND(SLOPE(INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MAX(N4:U4);N4:U4;0));TRUE);INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MAX(N4:U4);N4:U4;0));TRUE));0)
 ############Note: N4:U4 are the values of the corrected peak are of the standards
 
