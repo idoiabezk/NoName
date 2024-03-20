@@ -14,6 +14,7 @@ editor_options:
 #Load the libraries
 library(dplyr)
 library(tidyr)
+library(tidyverse)
 
 #Clean the environment
 rm(list = ls()) 
@@ -58,7 +59,6 @@ RecoveryPercentage <- mutate_at(Recovery, vars(matches(pattern)),
 Recovery <- mutate(GC_qToF_CPsFoodResults3, GC_qToF_CPsFoodResults3$IS / GC_qToF_CPsFoodResults3$RS)
 ```
 
-
 ## Prepare the single chain standards
 
 ```{r}
@@ -81,11 +81,22 @@ maxC9Cl3
 
 ####################ERROR: gives NA as the results 
 
+#x and y represent your independent and dependent variables, respectively.
+x<- minC9Cl3
+y<- maxC9Cl3
+# Fit linear regression model
+lm_model <- lm(y ~ x) #lm(y ~ x) fits a linear regression model of y on x.
+
+# Extract the slope coefficient
+slope <- round(coef(lm_model)[2], digits = 0) #coef(lm_model) retrieves the coefficients of the fitted model, and [2] selects the second coefficient, which corresponds to the slope.
+
+
+
 class(CorrectedArea$C9H17Cl3) #Checking if the values are defined as numeric: yes they are :(
 
 filtered_data <- CorrectedArea[complete.cases(CorrectedArea[c('9_48_1', '9_48_2', '9_48_3', '9_48_4'), "C9H17Cl3"]), ]
 
-class(CorrectedArea$C9H17Cl3)
+
 
 Min<- min(GC_qToF_CPsFoodResults3$IS)
 #=ROUND(SLOPE(INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MAX(N4:U4);N4:U4;0));TRUE);INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MAX(N4:U4);N4:U4;0));TRUE));0)
@@ -96,3 +107,60 @@ Min<- min(GC_qToF_CPsFoodResults3$IS)
 #=IF(ISERROR(W4);0;W4)
 ```
 
+Comparative between a linear calibration in Skyline, R studio and excel:
+
+- 
+```{r}
+#Slect the columns that we need
+TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, `Normalized Area`, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
+filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
+filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
+ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scater plot
+  geom_point() +
+  geom_smooth(method = "lm", # uses the linear regression model
+              se = FALSE, # this will remove the confidence intervals
+              colour = "orange",
+              size = 2) +
+  theme_classic() +
+  ylab("Normalized Area")
+
+
+#Slect the columns that we need
+TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, `Normalized Area`, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
+filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
+filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
+ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scater plot
+  geom_point() +
+  geom_smooth(method = "lm", # uses the linear regression model
+              se = FALSE, # this will remove the confidence intervals
+              colour = "orange",
+              size = 2) +
+  theme_classic() +
+  ylab("Normalized Area")
+
+
+```
+```
+```{r}
+PFAS_insects_long <- Statistics_Kumla_20200408 %>% # shortcut for pipe Ctrl + shift + M
+  pivot_longer(cols = PFBA:PFOA, # select all columns from PFBA to sum_21PFAS
+               names_to = "somePFAS", # name of the new column
+               values_to = "Conc") %>%  #name of the values from PFBA:sum_21PFAS
+  mutate(somePFAS = as.factor(somePFAS)) #make PFAS column a factor variable
+```
+
+```{r}
+#check the PFAS group names
+PFAS_insects_long |> group_by(somePFAS) |> tally() |> view() 
+# select PFOS isomers
+PFOS_branched <- c("1-PFOS 419/169", "3/4/5-PFOS80/98.9")
+
+PFAS_insects_long |>
+  filter(Group != "Water") |> #remove all water samples to only include solid samples
+  filter(str_detect(somePFAS, "sum_", negate = TRUE)) |> #remove all sum of PFAS using the argument: negate=TRUE 
+ggplot(aes(x = somePFAS, y = Conc)) +
+  geom_point() +
+  geom_boxplot() +
+  theme_classic() +
+  ylab("Concentration of PFAS (ng/g) in solid samples")
+  
