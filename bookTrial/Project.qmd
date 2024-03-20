@@ -124,43 +124,27 @@ ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scat
   theme_classic() +
   ylab("Normalized Area")
 
+##############Normalized area is missing values so, I tried with the Area instead to see if the code was correct
 
 #Slect the columns that we need
-TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, `Normalized Area`, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
+TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, Area, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
 filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
 filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
-ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scater plot
+ggplot(aes(x = `Analyte Concentration`, y = Area)) + #Plot the scater plot
   geom_point() +
   geom_smooth(method = "lm", # uses the linear regression model
               se = FALSE, # this will remove the confidence intervals
               colour = "orange",
               size = 2) +
   theme_classic() +
-  ylab("Normalized Area")
+  ylab("Area")
+
+
+
+##########################3########Try to generate a loop for the calibration curve, so I don't need to write the homologue and the standards for every calibration curve###########################################################
+
 
 
 ```
-```
-```{r}
-PFAS_insects_long <- Statistics_Kumla_20200408 %>% # shortcut for pipe Ctrl + shift + M
-  pivot_longer(cols = PFBA:PFOA, # select all columns from PFBA to sum_21PFAS
-               names_to = "somePFAS", # name of the new column
-               values_to = "Conc") %>%  #name of the values from PFBA:sum_21PFAS
-  mutate(somePFAS = as.factor(somePFAS)) #make PFAS column a factor variable
-```
 
-```{r}
-#check the PFAS group names
-PFAS_insects_long |> group_by(somePFAS) |> tally() |> view() 
-# select PFOS isomers
-PFOS_branched <- c("1-PFOS 419/169", "3/4/5-PFOS80/98.9")
-
-PFAS_insects_long |>
-  filter(Group != "Water") |> #remove all water samples to only include solid samples
-  filter(str_detect(somePFAS, "sum_", negate = TRUE)) |> #remove all sum of PFAS using the argument: negate=TRUE 
-ggplot(aes(x = somePFAS, y = Conc)) +
-  geom_point() +
-  geom_boxplot() +
-  theme_classic() +
-  ylab("Concentration of PFAS (ng/g) in solid samples")
-  
+```
