@@ -99,7 +99,6 @@ mutate(RecoveryPerc=Recovery*100)
 
 ```
 
-
 ## Prepare the single chain standards
 
 Before quantifying PCAs in R by the deconvolution method, I need to prepare a "calibration" excel to input in the script. In this Excel one calibration curve is built by linear regression for each PCA homologue in each standard
@@ -145,7 +144,6 @@ ggplot(aes(x = `Analyte Concentration`, y = Area)) + #Plot the scater plot
 
 ```
 
-
 ```{r}
 # Create an empty character vector
 sample_PFOS_info <- character()
@@ -157,10 +155,6 @@ for (i in 1:length(PFAS_insects$ID)) {
               " has PFOS concentration of", 
               round(PFAS_insects$PFOS[i],2 )
 ```
-
-
-
-
 
 ```{r}
 PFOS_water <- as.numeric()
@@ -187,26 +181,6 @@ if(PFAS_insects$Group[i] == "Water"){
 }
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ```{r}
 #Response factor of each homologue per 1 ng/µL
