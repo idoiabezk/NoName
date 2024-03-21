@@ -47,14 +47,14 @@ CorrectedArea <- mutate_at(GC_qToF_CPsFoodResultsB, vars(matches(pattern)),
 GC_qToF_CPsFoodResultsB$RS = as.numeric(GC_qToF_CPsFoodResultsB$RS) 
 GC_qToF_CPsFoodResultsB$IS = as.numeric(GC_qToF_CPsFoodResultsB$IS)
 
-####Filter for the standards that we want to compare to
+##########Filter and prepare the standards that we want to compare to
 Std<-GC_qToF_CPsFoodResultsB|>  
   select(`Replicate Name`, IS, RS)|> #Select the columns that we need
   filter(str_detect(`Replicate Name`, "Std", negate = FALSE))|> #Select the standards
   mutate(RatioStd = IS / RS) |> #Calculate the IS/RS area for the standards 
   summarize(AverageRatio = mean(RatioStd, na.rm = TRUE)) #Calculate the average of the three standards
 
-####Calculate the recovery
+##############Calculate the recovery
 GC_qToF_CPsFoodResultsD<-GC_qToF_CPsFoodResultsB|>
   filter(str_detect(`Replicate Name`, "9_", negate = TRUE))|>#Exclude the calibration standards
   filter(str_detect(`Replicate Name`, "10_", negate = TRUE))|>#Exclude the calibration standards
@@ -72,9 +72,13 @@ GC_qToF_CPsFoodResultsD<-GC_qToF_CPsFoodResultsB|>
   mutate(RecoveryPerc=Recovery*100) #The recovery in percentage
 
 
-#######Plotting the recovery
+#################Plotting the recovery
+
 # Define colors based on conditions: less than 50% red and above green
 GC_qToF_CPsFoodResultsD$color <- ifelse(GC_qToF_CPsFoodResultsD$RecoveryPerc > 50, "#CD3333", "#9ACD32")
+
+#Reorder the samples
+GC_qToF_CPsFoodResultsD$`Replicate Name` <- factor(GC_qToF_CPsFoodResultsD$`Replicate Name`, levels = c("1", "1B", "1C", "2", "3", "4A", "4B", "5A", "5B", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "18", "19", "20", "D1", "D2", "D3", "21 Na2SO4", "23 24 FB", "25 LB", "26 LB", "27 LB", "28 LB", "29 MLB"))
 
 # Bar plot
 ggplot(GC_qToF_CPsFoodResultsD, aes(x = `Replicate Name`, y = RecoveryPerc, fill = color)) +
@@ -94,8 +98,6 @@ mutate(RecoveryPerc=Recovery*100)
 
 
 ```
-
-
 
 
 ## Prepare the single chain standards
