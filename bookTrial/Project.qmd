@@ -43,10 +43,18 @@ CorrectedArea <- mutate_at(GC_qToF_CPsFoodResults3, vars(matches(pattern)),
 ```{r}
 # Define the RS as numeric
 GC_qToF_CPsFoodResults3$RS = as.numeric(GC_qToF_CPsFoodResults3$RS) 
+GC_qToF_CPsFoodResults3$IS = as.numeric(GC_qToF_CPsFoodResults3$IS)
 
-#Dividing the IS by RS
-Recovery <- mutate(GC_qToF_CPsFoodResults3, GC_qToF_CPsFoodResults3$IS / GC_qToF_CPsFoodResults3$RS) 
+#Filter for the standards that we want to compare to
+GC_qToF_CPsFoodResults3|>  select(`Replicate Name`, IS, RS)|> #Select the columns that we need
+  filter(str_detect(`Replicate Name`, "Std", negate = FALSE))|> #Select the standards
+  mutate(RecoveryStd = IS / RS) |> #Calculate the IS/RS area for the standards 
+  summarize(AverageRecovery = mean(RecoveryStd, na.rm = TRUE)) #Calculate the average of the three standrads
 
+#Dividing the IS by RS for the samples
+mutate(GC_qToF_CPsFoodResults3,RecoveryArea= IS / RS) |> #Divide IS/RS for all samples
+  mutate(Recovery=RecoveryArea/33.7)
+print(Recov)
 Recovery[Recovery$column_name == some_condition, "column_name"]
 
 STD <- average(Recovery$v)
@@ -59,7 +67,171 @@ RecoveryPercentage <- mutate_at(Recovery, vars(matches(pattern)),
 Recovery <- mutate(GC_qToF_CPsFoodResults3, GC_qToF_CPsFoodResults3$IS / GC_qToF_CPsFoodResults3$RS)
 ```
 
+
+
+```{r}
+
+###############################################################################
+### Calculate sample recovery (using the standard; 1,2,3,4 Tetrachloronaphthalene, TCN)
+###############################################################################
+
+# Read in the standard information for calculating the recovery
+df_recovery_std <- read.csv(filename_recovery_std, header=TRUE)
+
+# Replace NA Sample_peak_area with 0
+df_recovery_std <- df_recovery_std %>% 
+  mutate(Std_peak_area_corr=ifelse(is.na(Std_peak_area), 0, Std_peak_area))
+
+# Filter out just the recovery standard congener (TCN) and one other congener (e.g., C10Cl4) to get the internal standard information (all congeners have the same Sample_peak_area_IS)
+# Calculate the mass of internal standard (Sample_IS_mass_pg) and recovery standard (Sample_RS_mass_pg) added to samples
+df_recovery <- df_melt %>% 
+  filter(Congener=="TCN") %>% 
+  select(Congener, Sample_name, Sample_peak_area_RS=Sample_peak_area_corr, Sample_RS_vol_uL) %>% 
+  left_join(df_melt %>% 
+              filter(Congener=="C10Cl4") %>% # Can filter by any congener (the internal standard is the same for all)
+              select(Sample_name, Sample_peak_area_IS, Sample_IS_vol_uL)) %>% 
+  mutate(Sample_IS_conc_pg_uL=Sample_IS_conc_pg_uL,
+         Sample_RS_conc_pg_uL=Sample_RS_conc_pg_uL,
+         Sample_IS_mass_pg=Sample_IS_vol_uL*Sample_IS_conc_pg_uL,
+         Sample_RS_mass_pg=Sample_RS_vol_uL*Sample_RS_conc_pg_uL)
+# Joining with `by = join_by(Sample_name)`
+
+# Add the standard information for calculating recovery
+df_recovery$Std_peak_area_RS <- df_recovery_std$Std_peak_area_corr[nrow(df_recovery_std)]
+df_recovery$Std_peak_area_IS <- df_recovery_std$Std_peak_area_IS[1]
+
+# Calculate recoveries
+df_recovery <- df_recovery %>% 
+  mutate(Std_IS_vol_uL=Std_IS_vol_uL,
+         Std_RS_vol_uL=Std_RS_vol_uL,
+         Std_IS_conc_pg_uL=Std_IS_conc_pg_uL,
+         Std_RS_conc_pg_uL=Std_RS_conc_pg_uL,
+         Std_IS_mass_pg=Std_IS_vol_uL*Std_IS_conc_pg_uL,
+         Std_RS_mass_pg=Std_RS_vol_uL*Std_RS_conc_pg_uL,
+         RF_sample=(Sample_peak_area_RS/Sample_RS_mass_pg)/(Sample_peak_area_IS/Sample_IS_mass_pg),
+         RF_std=(Std_peak_area_RS/Std_RS_mass_pg)/(Std_peak_area_IS/Std_IS_mass_pg),
+         Recovery_pcnt=RF_std/RF_sample*100)
+
+# Merge recovery back in with original sample data
+df_melt <- df_melt %>% 
+  left_join(df_recovery %>% 
+              select(Sample_name, Recovery_pcnt))
+# Joining with `by = join_by(Sample_name)`
+
+```
+
+
+
+
+
+
 ## Prepare the single chain standards
+
+Before quantifying PCAs in R by the deconvolution method, I need to prepare a "calibration" excel to input in the script. In this Excel one calibration curve is built by linear regression for each PCA homologue in each standard
+
+### Build the calibration curves in R studio:
+
+-   
+
+```{r}
+#Select the columns that we need
+TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, `Normalized Area`, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
+filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
+filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
+ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scater plot
+  geom_point() +
+  geom_smooth(method = "lm", # uses the linear regression model
+              se = FALSE, # this will remove the confidence intervals
+              colour = "orange",
+              size = 2) +
+  theme_classic() +
+  ylab("Normalized Area")
+
+##############Normalized area is missing some values in the data frame so, I tried with the Area instead to see if the code was correct
+
+#Slect the columns that we need
+TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, Area, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
+filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
+filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
+ggplot(aes(x = `Analyte Concentration`, y = Area)) + #Plot the scater plot
+  geom_point() +
+  geom_smooth(method = "lm", # uses the linear regression model
+              se = FALSE, # this will remove the confidence intervals
+              colour = "orange",
+              size = 2) +
+  theme_classic() +
+  ylab("Area")
+
+
+
+##########################3########Try to generate a loop for the calibration curve, so I don't need to write the homologue and the standards for every calibration curve###########################################################
+
+
+
+```
+
+
+```{r}
+# Create an empty character vector
+sample_PFOS_info <- character()
+
+# iteratively fill the empty vector using a for loop and paste text with different cells at the i:th position of each selected column
+for (i in 1:length(PFAS_insects$ID)) {
+  sample_PFOS_info[i] <- paste("This sample: ", 
+              PFAS_insects$ID[i], 
+              " has PFOS concentration of", 
+              round(PFAS_insects$PFOS[i],2 )
+```
+
+
+
+
+
+```{r}
+PFOS_water <- as.numeric()
+PFOS_sediment <- as.numeric()
+PFOS_earthworms <- as.numeric()
+PFOS_emerg_aq_ins <- as.numeric()
+PFOS_aq_inslarv <- as.numeric()
+PFOS_terr_invcons <- as.numeric()
+
+for (i in 1:length(PFAS_insects$Group)){
+
+if(PFAS_insects$Group[i] == "Water"){
+  PFOS_water[i] <- PFAS_insects$PFOS[i]
+} else if (PFAS_insects$Group[i] == "Sediment") {
+  PFOS_sediment[i] <- PFAS_insects$PFOS[i]
+} else if (PFAS_insects$Group[i] == "Earthworms") {
+  PFOS_earthworms[i] <- PFAS_insects$PFOS[i]
+} else if (PFAS_insects$Group[i] == "Emergent aquatic insects") {
+  PFOS_emerg_aq_ins[i] <- PFAS_insects$PFOS[i]
+} else if (PFAS_insects$Group[i] == "Aquatic insect larvae") {
+  PFOS_aq_inslarv[i] <- PFAS_insects$PFOS[i]
+} else if (PFAS_insects$Group[i] == "Terrestrial invertebrate consumers") {
+  PFOS_terr_invcons[i] <- PFAS_insects$PFOS[i]
+}
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r}
 #Response factor of each homologue per 1 ng/µL
@@ -105,46 +277,4 @@ Min<- min(GC_qToF_CPsFoodResults3$IS)
 
 #The result from the previous row to this one
 #=IF(ISERROR(W4);0;W4)
-```
-
-Comparative between a linear calibration in Skyline, R studio and excel:
-
-- 
-```{r}
-#Slect the columns that we need
-TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, `Normalized Area`, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
-filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
-filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
-ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scater plot
-  geom_point() +
-  geom_smooth(method = "lm", # uses the linear regression model
-              se = FALSE, # this will remove the confidence intervals
-              colour = "orange",
-              size = 2) +
-  theme_classic() +
-  ylab("Normalized Area")
-
-##############Normalized area is missing values so, I tried with the Area instead to see if the code was correct
-
-#Slect the columns that we need
-TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, Area, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
-filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
-filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
-ggplot(aes(x = `Analyte Concentration`, y = Area)) + #Plot the scater plot
-  geom_point() +
-  geom_smooth(method = "lm", # uses the linear regression model
-              se = FALSE, # this will remove the confidence intervals
-              colour = "orange",
-              size = 2) +
-  theme_classic() +
-  ylab("Area")
-
-
-
-##########################3########Try to generate a loop for the calibration curve, so I don't need to write the homologue and the standards for every calibration curve###########################################################
-
-
-
-```
-
 ```
