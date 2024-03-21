@@ -15,11 +15,14 @@ editor_options:
 #Clean the environment
 rm(list = ls()) 
 
-
 #Load the libraries
 library(dplyr)
 library(tidyr)
 library(tidyverse)
+library(readxl)
+
+#Load the file
+GC_qToF_CPsFoodResults<-read_excel("F:/OREBRO/CP analysis/Food project/Result/Skyline/GC_qToF_CPsFoodResults.xlsx")
 
 #Wide the data so each sample is in one row
 GC_qToF_CPsFoodResultsB <- GC_qToF_CPsFoodResults |>  
@@ -105,14 +108,20 @@ Before quantifying PCAs in R by the deconvolution method, I need to prepare a "c
 
 ### Build the calibration curves in R studio:
 
--   
 
 ```{r}
-#Select the columns that we need
-TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, `Normalized Area`, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
-filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
-filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
-ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scater plot
+#Load the file
+
+TESTING<-read_excel("F:/LINKOPING/Manuscripts/Skyline/Skyline/TESTING.xlsx")
+
+######Build the calibration curve for one PCA homologue
+TESTING |>  
+  select(`Replicate Name`, Molecule, `Isotope Label Type`, `Normalized Area`, `Analyte Concentration`) |>#Select the columns that we need
+  filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
+  filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
+  filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
+
+  ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scatter plot
   geom_point() +
   geom_smooth(method = "lm", # uses the linear regression model
               se = FALSE, # this will remove the confidence intervals
@@ -121,13 +130,18 @@ ggplot(aes(x = `Analyte Concentration`, y = `Normalized Area`)) + #Plot the scat
   theme_classic() +
   ylab("Normalized Area")
 
+###################################################################################################################
 ##############Normalized area is missing some values in the data frame so, I tried with the Area instead to see if the code was correct
+###################################################################################################################
 
-#Slect the columns that we need
-TESTING |>  select(`Replicate Name`, Molecule, `Isotope Label Type`, Area, `Analyte Concentration`) |> filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
-filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
-filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
-ggplot(aes(x = `Analyte Concentration`, y = Area)) + #Plot the scater plot
+
+TESTING |>  
+  select(`Replicate Name`, Molecule, `Isotope Label Type`, Area, `Analyte Concentration`) |> #Select the columns that we need
+  filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
+  filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
+  filter(str_detect(`Replicate Name`, "11_57_", negate = TRUE)) |> #remove all the other standards 
+
+  ggplot(aes(x = `Analyte Concentration`, y = Area)) + #Plot the scatter plot
   geom_point() +
   geom_smooth(method = "lm", # uses the linear regression model
               se = FALSE, # this will remove the confidence intervals
@@ -137,89 +151,112 @@ ggplot(aes(x = `Analyte Concentration`, y = Area)) + #Plot the scater plot
   ylab("Area")
 
 
+#################################################################################################################
+###################################Try to generate a loop for the calibration curve, so I don't need to write the homologue and the standards for every calibration curve###########################################################
+#################################################################################################################
 
-##########################3########Try to generate a loop for the calibration curve, so I don't need to write the homologue and the standards for every calibration curve###########################################################
 
+#Two standards per each molecule -> each molecule one calibration curve for standard "A" and one for "B"
 
+###########CALIBRATION FOR STANDARDS "A" ##################################################
 
-```
-
-```{r}
-# Create an empty character vector
-sample_PFOS_info <- character()
-
-# iteratively fill the empty vector using a for loop and paste text with different cells at the i:th position of each selected column
-for (i in 1:length(PFAS_insects$ID)) {
-  sample_PFOS_info[i] <- paste("This sample: ", 
-              PFAS_insects$ID[i], 
-              " has PFOS concentration of", 
-              round(PFAS_insects$PFOS[i],2 )
-```
-
-```{r}
-PFOS_water <- as.numeric()
-PFOS_sediment <- as.numeric()
-PFOS_earthworms <- as.numeric()
-PFOS_emerg_aq_ins <- as.numeric()
-PFOS_aq_inslarv <- as.numeric()
-PFOS_terr_invcons <- as.numeric()
-
-for (i in 1:length(PFAS_insects$Group)){
-
-if(PFAS_insects$Group[i] == "Water"){
-  PFOS_water[i] <- PFAS_insects$PFOS[i]
-} else if (PFAS_insects$Group[i] == "Sediment") {
-  PFOS_sediment[i] <- PFAS_insects$PFOS[i]
-} else if (PFAS_insects$Group[i] == "Earthworms") {
-  PFOS_earthworms[i] <- PFAS_insects$PFOS[i]
-} else if (PFAS_insects$Group[i] == "Emergent aquatic insects") {
-  PFOS_emerg_aq_ins[i] <- PFAS_insects$PFOS[i]
-} else if (PFAS_insects$Group[i] == "Aquatic insect larvae") {
-  PFOS_aq_inslarv[i] <- PFAS_insects$PFOS[i]
-} else if (PFAS_insects$Group[i] == "Terrestrial invertebrate consumers") {
-  PFOS_terr_invcons[i] <- PFAS_insects$PFOS[i]
+# Function to create molecule names
+create_molecule_name <- function(i, j) {
+  molecule_name <- paste0("C", i, "H", (2*i)+2-j, "Cl", j)
+  return(molecule_name)
 }
+
+# Create an empty list to store plots
+plotsA <- list()
+
+
+# Define the range of i and j
+i_values <- 11 #in my data frame I only have the standard for C11, but otherwise it should be 9:30
+j_values <- 3:11
+
+# Nested loops to iterate over i and j
+for (i in i_values) {
+  for (j in j_values) {
+    # Create molecule name
+    molecule_name <- create_molecule_name(i, j)
+    
+    # Filter data for the current molecule
+    filtered_data <- TESTING |>
+      filter(`Isotope Label Type` == "Quan", Molecule == molecule_name, Note == "A") 
+    
+    # Create plot for the current molecule
+    plotA <- ggplot(filtered_data, aes(x = `Analyte Concentration`, y = Area)) +
+      geom_point() +
+      geom_smooth(method = "lm", 
+                  se = FALSE, 
+                  colour = "orange",
+                  size = 2) +
+      theme_classic() +
+      ylab("Area") +
+      ggtitle(paste("Molecule:", molecule_name))
+    
+    # Store the plot in the list
+    plotsA[[paste("Molecule", molecule_name)]] <- plotA
+  }
 }
+
+# Print the plots
+plotsA
+
+
+###########CALIBRATION FOR STANDARDS "B" ##################################################
+
+# Function to create molecule names
+create_molecule_name <- function(i, j) {
+  molecule_name <- paste0("C", i, "H", (2*i)+2-j, "Cl", j)
+  return(molecule_name)
+}
+
+# Create an empty list to store plots
+plotsB <- list()
+
+# Create an empty list to store regression results
+regression_results <- list()
+
+# Define the range of i and j
+i_values <- 11 #in my data frame I only have the standard for C11, but otherwise it should be 9:30
+j_values <- 3:11
+
+# Nested loops to iterate over i and j
+for (i in i_values) {
+  for (j in j_values) {
+    # Create molecule name
+    molecule_name <- create_molecule_name(i, j)
+    
+    # Filter data for the current molecule
+    filtered_data <- TESTING |>
+      filter(`Isotope Label Type` == "Quan", Molecule == molecule_name, Note == "B") 
+    
+    # Create plot for the current molecule
+    plotB <- ggplot(filtered_data, aes(x = `Analyte Concentration`, y = Area)) +
+      geom_point() +
+      geom_smooth(method = "lm", 
+                  se = FALSE, 
+                  colour = "orange",
+                  size = 2) +
+      theme_classic() +
+      ylab("Area") +
+      ggtitle(paste("Molecule:", molecule_name))
+    
+    # Store the plot in the list
+    plotsB[[paste("Molecule", molecule_name)]] <- plotB
+  }
+}
+
+# Print the plots
+plotsB
 ```
+
+
+### The code for Excel:
 
 ```{r}
 #Response factor of each homologue per 1 ng/µL
-
-#For having the same display as in the Excel sheet we first need to transpose our data frame:
-
-t_CorrectedArea <- t(CorrectedArea)
-minC9Cl3<- min(t_CorrectedArea["C9H17Cl3", c('V8', 'V9', 'V10', 'V11')])
-minC9Cl3 
-###########ERROR: it does not find the column names
-
-#Maybe I can fo it without transposing?
-
-minC9Cl3<- min(CorrectedArea[c('9_48_1', '9_48_2', '9_48_3', '9_48_4'), "C9H17Cl3"]) #min for C9H17Cl3 in the standard
-minC9Cl3
-
-maxC9Cl3<- max(CorrectedArea[c('9_48_1', '9_48_2', '9_48_3', '9_48_4'), "C9H17Cl3"]) #max for C9H17Cl3 in the standard
-maxC9Cl3
-
-####################ERROR: gives NA as the results 
-
-#x and y represent your independent and dependent variables, respectively.
-x<- minC9Cl3
-y<- maxC9Cl3
-# Fit linear regression model
-lm_model <- lm(y ~ x) #lm(y ~ x) fits a linear regression model of y on x.
-
-# Extract the slope coefficient
-slope <- round(coef(lm_model)[2], digits = 0) #coef(lm_model) retrieves the coefficients of the fitted model, and [2] selects the second coefficient, which corresponds to the slope.
-
-
-
-class(CorrectedArea$C9H17Cl3) #Checking if the values are defined as numeric: yes they are :(
-
-filtered_data <- CorrectedArea[complete.cases(CorrectedArea[c('9_48_1', '9_48_2', '9_48_3', '9_48_4'), "C9H17Cl3"]), ]
-
-
-
-Min<- min(GC_qToF_CPsFoodResultsB$IS)
 #=ROUND(SLOPE(INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MAX(N4:U4);N4:U4;0));TRUE);INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MAX(N4:U4);N4:U4;0));TRUE));0)
 ############Note: N4:U4 are the values of the corrected peak are of the standards
 
