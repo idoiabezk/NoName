@@ -11,16 +11,18 @@ editor_options:
 ## Correct the instrumental with the internal standard (IS):
 
 ```{r}
+
+#Clean the environment
+rm(list = ls()) 
+
+
 #Load the libraries
 library(dplyr)
 library(tidyr)
 library(tidyverse)
 
-#Clean the environment
-rm(list = ls()) 
-
 #Wide the data so each sample is in one row
-GC_qToF_CPsFoodResults3 <- GC_qToF_CPsFoodResults |>  
+GC_qToF_CPsFoodResultsB <- GC_qToF_CPsFoodResults |>  
   filter(Quantitative == "YES") |> 
   pivot_wider(id_cols = `Replicate Name`,
               names_from = Molecule, # name of the new column
@@ -29,12 +31,12 @@ GC_qToF_CPsFoodResults3 <- GC_qToF_CPsFoodResults |>
 
 #Make the data in the data frame numeric
 pattern <- "^C\\d+" # This pattern matches column names starting with "C" followed by numbers
-GC_qToF_CPsFoodResults3 <- mutate_at(GC_qToF_CPsFoodResults3, vars(matches(pattern)), as.numeric) # Apply as.numeric() to columns matching the pattern
-GC_qToF_CPsFoodResults3$IS = as.numeric(GC_qToF_CPsFoodResults3$IS)# Define the IS as numeric 
+GC_qToF_CPsFoodResultsB <- mutate_at(GC_qToF_CPsFoodResultsB, vars(matches(pattern)), as.numeric) # Apply as.numeric() to columns matching the pattern
+GC_qToF_CPsFoodResultsB$IS = as.numeric(GC_qToF_CPsFoodResultsB$IS)# Define the IS as numeric 
 
 #Divide the area of the homologues by the IS
-CorrectedArea <- mutate_at(GC_qToF_CPsFoodResults3, vars(matches(pattern)), 
-                           ~ . / GC_qToF_CPsFoodResults3$IS) #It will now do it for all the columns that have the pattern (start the name with "C")
+CorrectedArea <- mutate_at(GC_qToF_CPsFoodResultsB, vars(matches(pattern)), 
+                           ~ . / GC_qToF_CPsFoodResultsB$IS) #It will now do it for all the columns that have the pattern (start the name with "C")
 
 ```
 
@@ -42,85 +44,56 @@ CorrectedArea <- mutate_at(GC_qToF_CPsFoodResults3, vars(matches(pattern)),
 
 ```{r}
 # Define the RS as numeric
-GC_qToF_CPsFoodResults3$RS = as.numeric(GC_qToF_CPsFoodResults3$RS) 
-GC_qToF_CPsFoodResults3$IS = as.numeric(GC_qToF_CPsFoodResults3$IS)
+GC_qToF_CPsFoodResultsB$RS = as.numeric(GC_qToF_CPsFoodResultsB$RS) 
+GC_qToF_CPsFoodResultsB$IS = as.numeric(GC_qToF_CPsFoodResultsB$IS)
 
-#Filter for the standards that we want to compare to
-GC_qToF_CPsFoodResults3|>  select(`Replicate Name`, IS, RS)|> #Select the columns that we need
+####Filter for the standards that we want to compare to
+Std<-GC_qToF_CPsFoodResultsB|>  
+  select(`Replicate Name`, IS, RS)|> #Select the columns that we need
   filter(str_detect(`Replicate Name`, "Std", negate = FALSE))|> #Select the standards
-  mutate(RecoveryStd = IS / RS) |> #Calculate the IS/RS area for the standards 
-  summarize(AverageRecovery = mean(RecoveryStd, na.rm = TRUE)) #Calculate the average of the three standrads
+  mutate(RatioStd = IS / RS) |> #Calculate the IS/RS area for the standards 
+  summarize(AverageRatio = mean(RatioStd, na.rm = TRUE)) #Calculate the average of the three standards
 
+####Calculate the recovery
+GC_qToF_CPsFoodResultsD<-GC_qToF_CPsFoodResultsB|>
+  filter(str_detect(`Replicate Name`, "9_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "10_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "11_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "12_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "13_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "14_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "15_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "16_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "17_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "Std", negate = TRUE))|>#Exclude the calibration standards
+  
+  mutate(RatioSample= IS / RS) |> #Divide IS/RS for all samples
+  mutate(Recovery=RatioSample/33.71871)|> #Divide each sample ratio of IS/RS by the average ratio of the standards
+  mutate(RecoveryPerc=Recovery*100) #The recovery in percentage
+
+
+#######Plotting the recovery
+# Define colors based on conditions: less than 50% red and above green
+GC_qToF_CPsFoodResultsD$color <- ifelse(GC_qToF_CPsFoodResultsD$RecoveryPerc > 50, "#CD3333", "#9ACD32")
+
+# Bar plot
+ggplot(GC_qToF_CPsFoodResultsD, aes(x = `Replicate Name`, y = RecoveryPerc, fill = color)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = c("#CD3333", "#9ACD32"), guide = FALSE) +
+  labs(x = "Replicate Name", y = "RECOVERY", title = "RECOVERY") +
+  theme_minimal()
+
+
+###################################################################################################################
 #Dividing the IS by RS for the samples
-mutate(GC_qToF_CPsFoodResults3,RecoveryArea= IS / RS) |> #Divide IS/RS for all samples
-  mutate(Recovery=RecoveryArea/33.7)
-print(Recov)
-Recovery[Recovery$column_name == some_condition, "column_name"]
+GC_qToF_CPsFoodResultsB<-mutate(GC_qToF_CPsFoodResultsB,RatioSample= IS / RS) |> #Divide IS/RS for all samples
+mutate(Recovery=RatioSample/Std)|>
+mutate(RecoveryPerc=Recovery*100)
+###############################It gives the values of the first row to all of them###############
+###################################################################################################################
 
-STD <- average(Recovery$v)
-#The recovery in %
-RecoveryPercentage <- mutate_at(Recovery, vars(matches(pattern)), 
-                           ~ . *100) 
-```
-
-```{r}
-Recovery <- mutate(GC_qToF_CPsFoodResults3, GC_qToF_CPsFoodResults3$IS / GC_qToF_CPsFoodResults3$RS)
-```
-
-
-
-```{r}
-
-###############################################################################
-### Calculate sample recovery (using the standard; 1,2,3,4 Tetrachloronaphthalene, TCN)
-###############################################################################
-
-# Read in the standard information for calculating the recovery
-df_recovery_std <- read.csv(filename_recovery_std, header=TRUE)
-
-# Replace NA Sample_peak_area with 0
-df_recovery_std <- df_recovery_std %>% 
-  mutate(Std_peak_area_corr=ifelse(is.na(Std_peak_area), 0, Std_peak_area))
-
-# Filter out just the recovery standard congener (TCN) and one other congener (e.g., C10Cl4) to get the internal standard information (all congeners have the same Sample_peak_area_IS)
-# Calculate the mass of internal standard (Sample_IS_mass_pg) and recovery standard (Sample_RS_mass_pg) added to samples
-df_recovery <- df_melt %>% 
-  filter(Congener=="TCN") %>% 
-  select(Congener, Sample_name, Sample_peak_area_RS=Sample_peak_area_corr, Sample_RS_vol_uL) %>% 
-  left_join(df_melt %>% 
-              filter(Congener=="C10Cl4") %>% # Can filter by any congener (the internal standard is the same for all)
-              select(Sample_name, Sample_peak_area_IS, Sample_IS_vol_uL)) %>% 
-  mutate(Sample_IS_conc_pg_uL=Sample_IS_conc_pg_uL,
-         Sample_RS_conc_pg_uL=Sample_RS_conc_pg_uL,
-         Sample_IS_mass_pg=Sample_IS_vol_uL*Sample_IS_conc_pg_uL,
-         Sample_RS_mass_pg=Sample_RS_vol_uL*Sample_RS_conc_pg_uL)
-# Joining with `by = join_by(Sample_name)`
-
-# Add the standard information for calculating recovery
-df_recovery$Std_peak_area_RS <- df_recovery_std$Std_peak_area_corr[nrow(df_recovery_std)]
-df_recovery$Std_peak_area_IS <- df_recovery_std$Std_peak_area_IS[1]
-
-# Calculate recoveries
-df_recovery <- df_recovery %>% 
-  mutate(Std_IS_vol_uL=Std_IS_vol_uL,
-         Std_RS_vol_uL=Std_RS_vol_uL,
-         Std_IS_conc_pg_uL=Std_IS_conc_pg_uL,
-         Std_RS_conc_pg_uL=Std_RS_conc_pg_uL,
-         Std_IS_mass_pg=Std_IS_vol_uL*Std_IS_conc_pg_uL,
-         Std_RS_mass_pg=Std_RS_vol_uL*Std_RS_conc_pg_uL,
-         RF_sample=(Sample_peak_area_RS/Sample_RS_mass_pg)/(Sample_peak_area_IS/Sample_IS_mass_pg),
-         RF_std=(Std_peak_area_RS/Std_RS_mass_pg)/(Std_peak_area_IS/Std_IS_mass_pg),
-         Recovery_pcnt=RF_std/RF_sample*100)
-
-# Merge recovery back in with original sample data
-df_melt <- df_melt %>% 
-  left_join(df_recovery %>% 
-              select(Sample_name, Recovery_pcnt))
-# Joining with `by = join_by(Sample_name)`
 
 ```
-
-
 
 
 
@@ -270,7 +243,7 @@ filtered_data <- CorrectedArea[complete.cases(CorrectedArea[c('9_48_1', '9_48_2'
 
 
 
-Min<- min(GC_qToF_CPsFoodResults3$IS)
+Min<- min(GC_qToF_CPsFoodResultsB$IS)
 #=ROUND(SLOPE(INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-10+MATCH(MAX(N4:U4);N4:U4;0));TRUE);INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MIN(N4:U4);N4:U4;0));TRUE):INDIRECT(ADDRESS(ROW();COLUMN()-18+MATCH(MAX(N4:U4);N4:U4;0));TRUE));0)
 ############Note: N4:U4 are the values of the corrected peak are of the standards
 
