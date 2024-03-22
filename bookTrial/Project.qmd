@@ -20,6 +20,7 @@ library(dplyr)
 library(tidyr)
 library(tidyverse)
 library(readxl)
+library(patchwork)
 
 #Load the file
 GC_qToF_CPsFoodResults<-read_excel("F:/OREBRO/CP analysis/Food project/Result/Skyline/GC_qToF_CPsFoodResults.xlsx")
@@ -156,12 +157,16 @@ create_molecule_name <- function(i, j) {
   return(molecule_name)
 }
 
-# Create an empty list to store plots
+# Create an empty list to store plots and calibration results
 plotsA <- list()
-
+calibration_resultsA <- data.frame(Molecule = character(),
+                                  Slope = numeric(),
+                                  Intercept = numeric(),
+                                  R_squared = numeric(),
+                                  stringsAsFactors = FALSE)
 
 # Define the range of i and j
-i_values <- 11 #in my data frame I only have the standard for C11, but otherwise it should be 9:30
+i_values <- 11
 j_values <- 3:11
 
 # Nested loops to iterate over i and j
@@ -171,29 +176,59 @@ for (i in i_values) {
     molecule_name <- create_molecule_name(i, j)
     
     # Filter data for the current molecule
-    filtered_data <- TESTING |>
+    filtered_dataA <- TESTING |>
       filter(`Isotope Label Type` == "Quan", Molecule == molecule_name, Note == "A") 
     
-    # Create plot for the current molecule
-    plotA <- ggplot(filtered_data, aes(x = `Analyte Concentration`, y = Area)) +
-      geom_point() +
-      geom_smooth(method = "lm", 
-                  se = FALSE, 
-                  colour = "orange",
-                  size = 2) +
-      theme_classic() +
-      ylab("Area") +
-      ggtitle(paste("Molecule:", molecule_name))
-    
-    # Store the plot in the list
-    plotsA[[paste("Molecule", molecule_name)]] <- plotA
+    # Check if there are any non-NA cases in the filtered data
+    if (sum(!is.na(filtered_dataA$Area)) == 0 || sum(!is.na(filtered_dataA$`Analyte Concentration`)) == 0) {
+      cat("No valid cases for fitting the model for molecule:", molecule_name, "\n")
+    } else {
+      # Fit linear model to the data
+      lm_modelA <- lm(Area ~ `Analyte Concentration`, data = filtered_dataA)
+      
+      # Extract slope and intercept from the model
+      slopeA <- coef(lm_modelA)[2]
+      interceptA <- coef(lm_modelA)[1]
+      
+      # Calculate R-squared
+      R_squaredA <- summary(lm_modelA)$r.squared
+      
+      # Store the calibration results in the data frame
+      calibration_resultsA <- rbind(calibration_resultsA, 
+                                   data.frame(Molecule = molecule_name,
+                                              Slope = slopeA,
+                                              Intercept = interceptA,
+                                              R_squared = R_squaredA))
+      
+      # Create plot for the current molecule
+      plotA <- ggplot(filtered_dataA, aes(x = `Analyte Concentration`, y = Area)) +
+        geom_point() +
+        geom_smooth(method = "lm", 
+                    se = FALSE, 
+                    colour = "orange",
+                    size = 1) +
+        theme_classic() +
+        ylab("Area") +
+        ggtitle(paste("Molecule:", molecule_name))
+      
+      # Store the plot in the list
+      plotsA[[paste("Molecule", molecule_name)]] <- plotA
+    }
   }
 }
 
-# Print the plots
-plotsA
+# Print the data frame with calibration results
+print(calibration_resultsA)
 
 
+# Arrange plots in a grid
+calibration_curves_gridA <- plotsA[[1]]
+for (i in 2:length(plotsA)) {
+  calibration_curves_gridA <- calibration_curves_gridA + plotsA[[i]]
+}
+
+# Print the grid of calibration curves
+calibration_curves_gridA
 
 ###########CALIBRATION FOR STANDARDS "B" ##################################################
 
@@ -203,14 +238,16 @@ create_molecule_name <- function(i, j) {
   return(molecule_name)
 }
 
-# Create an empty list to store plots
+# Create an empty list to store plots and calibration results
 plotsB <- list()
-
-# Create an empty list to store regression results
-regression_results <- list()
+calibration_resultsB <- data.frame(Molecule = character(),
+                                  Slope = numeric(),
+                                  Intercept = numeric(),
+                                  R_squared = numeric(),
+                                  stringsAsFactors = FALSE)
 
 # Define the range of i and j
-i_values <- 11 #in my data frame I only have the standard for C11, but otherwise it should be 9:30
+i_values <- 11
 j_values <- 3:11
 
 # Nested loops to iterate over i and j
@@ -220,27 +257,60 @@ for (i in i_values) {
     molecule_name <- create_molecule_name(i, j)
     
     # Filter data for the current molecule
-    filtered_data <- TESTING |>
+    filtered_dataB <- TESTING |>
       filter(`Isotope Label Type` == "Quan", Molecule == molecule_name, Note == "B") 
     
-    # Create plot for the current molecule
-    plotB <- ggplot(filtered_data, aes(x = `Analyte Concentration`, y = Area)) +
-      geom_point() +
-      geom_smooth(method = "lm", 
-                  se = FALSE, 
-                  colour = "orange",
-                  size = 2) +
-      theme_classic() +
-      ylab("Area") +
-      ggtitle(paste("Molecule:", molecule_name))
-    
-    # Store the plot in the list
-    plotsB[[paste("Molecule", molecule_name)]] <- plotB
+    # Check if there are any non-NA cases in the filtered data
+    if (sum(!is.na(filtered_dataB$Area)) == 0 || sum(!is.na(filtered_dataB$`Analyte Concentration`)) == 0) {
+      cat("No valid cases for fitting the model for molecule:", molecule_name, "\n")
+    } else {
+      # Fit linear model to the data
+      lm_modelB <- lm(Area ~ `Analyte Concentration`, data = filtered_dataB)
+      
+      # Extract slope and intercept from the model
+      slopeB <- coef(lm_modelB)[2]
+      interceptB <- coef(lm_modelB)[1]
+      
+      # Calculate R-squared
+      R_squaredB <- summary(lm_modelB)$r.squared
+      
+      # Store the calibration results in the data frame
+      calibration_resultsB <- rbind(calibration_resultsB, 
+                                   data.frame(Molecule = molecule_name,
+                                              Slope = slopeB,
+                                              Intercept = interceptB,
+                                              R_squared = R_squaredB))
+      
+      # Create plot for the current molecule
+      plotB <- ggplot(filtered_dataB, aes(x = `Analyte Concentration`, y = Area)) +
+        geom_point() +
+        geom_smooth(method = "lm", 
+                    se = FALSE, 
+                    colour = "purple",
+                    size = 1) +
+        theme_classic() +
+        ylab("Area") +
+        ggtitle(paste("Molecule:", molecule_name))
+      
+      # Store the plot in the list
+      plotsB[[paste("Molecule", molecule_name)]] <- plotB
+    }
   }
 }
 
-# Print the plots
-plotsB
+# Print the data frame with calibration results
+print(calibration_resultsB)
+
+
+# Arrange plots in a grid
+calibration_curves_gridB <- plotsB[[1]]
+for (i in 2:length(plotsB)) {
+  calibration_curves_gridB <- calibration_curves_gridB + plotsB[[i]]
+}
+
+# Print the grid of calibration curves
+calibration_curves_gridB
+
 ```
 
 ### The code for Excel:
