@@ -58,7 +58,7 @@ Std<-GC_qToF_CPsFoodResultsB|>
   summarize(AverageRatio = mean(RatioStd, na.rm = TRUE)) #Calculate the average of the three standards
 
 ##############Calculate the recovery
-GC_qToF_CPsFoodResultsD<-GC_qToF_CPsFoodResultsB|>
+GC_qToF_CPsFoodResultsB<-GC_qToF_CPsFoodResultsB|>
   filter(str_detect(`Replicate Name`, "9_", negate = TRUE))|>#Exclude the calibration standards
   filter(str_detect(`Replicate Name`, "10_", negate = TRUE))|>#Exclude the calibration standards
   filter(str_detect(`Replicate Name`, "11_", negate = TRUE))|>#Exclude the calibration standards
@@ -71,34 +71,24 @@ GC_qToF_CPsFoodResultsD<-GC_qToF_CPsFoodResultsB|>
   filter(str_detect(`Replicate Name`, "Std", negate = TRUE))|>#Exclude the calibration standards
   
   mutate(RatioSample= IS / RS) |> #Divide IS/RS for all samples
-  mutate(Recovery=RatioSample/33.71871)|> #Divide each sample ratio of IS/RS by the average ratio of the standards
+  mutate(Recovery=RatioSample/as.numeric(Std))|> #Divide each sample ratio of IS/RS by the average ratio of the standards
   mutate(RecoveryPerc=Recovery*100) #The recovery in percentage
 
 
 #################Plotting the recovery
 
 # Define colors based on conditions: less than 50% red and above green
-GC_qToF_CPsFoodResultsD$color <- ifelse(GC_qToF_CPsFoodResultsD$RecoveryPerc > 50, "#CD3333", "#9ACD32")
+GC_qToF_CPsFoodResultsB$color <- ifelse(GC_qToF_CPsFoodResultsB$RecoveryPerc > 50, "#CD3333", "#9ACD32")
 
 #Reorder the samples
-GC_qToF_CPsFoodResultsD$`Replicate Name` <- factor(GC_qToF_CPsFoodResultsD$`Replicate Name`, levels = c("1", "1B", "1C", "2", "3", "4A", "4B", "5A", "5B", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "18", "19", "20", "D1", "D2", "D3", "21 Na2SO4", "23 24 FB", "25 LB", "26 LB", "27 LB", "28 LB", "29 MLB"))
+GC_qToF_CPsFoodResultsB$`Replicate Name` <- factor(GC_qToF_CPsFoodResultsB$`Replicate Name`, levels = c("1", "1B", "1C", "2", "3", "4A", "4B", "5A", "5B", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "18", "19", "20", "D1", "D2", "D3", "21 Na2SO4", "23 24 FB", "25 LB", "26 LB", "27 LB", "28 LB", "29 MLB"))
 
 # Bar plot
-ggplot(GC_qToF_CPsFoodResultsD, aes(x = `Replicate Name`, y = RecoveryPerc, fill = color)) +
+ggplot(GC_qToF_CPsFoodResultsB, aes(x = `Replicate Name`, y = RecoveryPerc, fill = color)) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_fill_manual(values = c("#CD3333", "#9ACD32"), guide = FALSE) +
   labs(x = "Replicate Name", y = "RECOVERY", title = "RECOVERY") +
   theme_minimal()
-
-
-###################################################################################################################
-#Dividing the IS by RS for the samples
-GC_qToF_CPsFoodResultsB<-mutate(GC_qToF_CPsFoodResultsB,RatioSample= IS / RS) |> #Divide IS/RS for all samples
-mutate(Recovery=RatioSample/Std)|>
-mutate(RecoveryPerc=Recovery*100)
-###############################It gives the values of the first row to all of them###############
-###################################################################################################################
-
 
 ```
 
@@ -108,14 +98,14 @@ Before quantifying PCAs in R by the deconvolution method, I need to prepare a "c
 
 ### Build the calibration curves in R studio:
 
-
 ```{r}
 #Load the file
 
-TESTING<-read_excel("F:/LINKOPING/Manuscripts/Skyline/Skyline/TESTING.xlsx")
+TESTING<-read_excel("F:/LINKOPING/Manuscripts/Skyline/Skyline/TESTING.xlsx")|>
+mutate(`Analyte Concentration`= as.numeric(`Analyte Concentration`))
 
 ######Build the calibration curve for one PCA homologue
-TESTING |>  
+TESTING |>
   select(`Replicate Name`, Molecule, `Isotope Label Type`, `Normalized Area`, `Analyte Concentration`) |>#Select the columns that we need
   filter(`Isotope Label Type`== "Quan") |> #Filter for the Quan
   filter(`Molecule` == "C11H19Cl5")|> #Filter for one PCA homologue
@@ -204,6 +194,7 @@ for (i in i_values) {
 plotsA
 
 
+
 ###########CALIBRATION FOR STANDARDS "B" ##################################################
 
 # Function to create molecule names
@@ -251,7 +242,6 @@ for (i in i_values) {
 # Print the plots
 plotsB
 ```
-
 
 ### The code for Excel:
 
