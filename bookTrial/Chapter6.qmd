@@ -10,6 +10,16 @@ editor_options:
 
 ## Basic and ggaplot2 plots:
 
+```{r}
+#Load the Excel file:
+library(readxl) #Load the library for inporting the file to R
+
+#Select the file
+Statistics_Kumla_20200408<-read_excel("F:/LINKOPING/Credits/Courses/LiU/Data Visualization/R/Statistics_Kumla_20200408.xlsx")
+
+```
+
+
 **Scatter plot: using plot()**
 
 ```{r}
@@ -38,7 +48,7 @@ ggplot(
 **Scatter plot + regression line: using plot()**
 
 ```{r}
-lot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
+plot(x = Statistics_Kumla_20200408$PFOA, y = Statistics_Kumla_20200408$PFBA, main = "PFBA vs PFOS concentrations",
      xlab = "PFOA concentrations (ng/L)",
      ylab = "PFBA concentrations (ng/L",
      pch = 19) + # choosing symbol for points in a graph (see ?pch for number/symbol)
