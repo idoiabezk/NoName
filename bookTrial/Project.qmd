@@ -534,12 +534,12 @@ combined_df <- rbind(calibration_resultsA, calibration_resultsB)
 ```{r}
 #Load the file and prepare the data frame
 
-TESTINGB<-read_excel("F:/LINKOPING/Manuscripts/Skyline/Skyline/TESTINGB.xlsx")|>
+TESTINGB<-read_excel("F:/LINKOPING/Manuscripts/Skyline/Skyline/TESTINGB.xlsx")|> #Read the result file
    filter(`Isotope Label Type` == "Quan")|> #Filter for the quan ions
    mutate(Area= as.numeric(Area))   #Make sure that the values are numeric
 TESTINGB$Chain_length <- sub(".*-C(9|10|11|12|13|14|15|16|17)$", "\\1", TESTINGB$"Molecule List")   #Generate the column chain Length which will contain the number of carbons
 
-# Determine the type based on the Chain lenght
+# Determine the type based on the Chain length
       TESTINGB$type <- ifelse(
   TESTINGB$Chain_length >= 10 & TESTINGB$Chain_length <= 13,
   "SCCPs",
@@ -553,12 +553,26 @@ TESTINGB$Chain_length <- sub(".*-C(9|10|11|12|13|14|15|16|17)$", "\\1", TESTINGB
     )
   )
 )
-TESTINGB$Chain_length <- paste("C",sub(".*-C(9|10|11|12|13|14|15|16|17)$", "\\1", TESTINGB$"Molecule List")) #Change the column chain Lengthcolumn so it fits the following script and the one of the standards
+TESTINGB$Chain_length <- paste("C",sub(".*-C(9|10|11|12|13|14|15|16|17)$", "\\1", TESTINGB$"Molecule List")) #Change the column chain Length column so it fits the following script and the one of the standards
 
 #Rename the column Molecule to Homologue so it fits the next script and the one of the standards
 colnames(TESTINGB)[which(colnames(TESTINGB) == "Molecule")] <- "Homologue"
 
-#Grouping samples for creating one data frame for each
+#Remove the standards:
+TESTINGB<-TESTINGB|>
+  filter(str_detect(`Replicate Name`, "9_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "10_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "11_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "12_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "13_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "14_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "15_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "16_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "17_", negate = TRUE))|>#Exclude the calibration standards
+  filter(str_detect(`Replicate Name`, "Std", negate = TRUE))#Exclude the calibration standards
+
+
+#Group samples for creating one data frame for each
 
 list_of_samples <- split(TESTINGB, TESTINGB$`Replicate Name`)
 
@@ -577,7 +591,7 @@ list_of_samples <- split(TESTINGB, TESTINGB$`Replicate Name`)
 # We can access each data frame in the list and perform operations on it as needed.
 
 
-
+###################################################################################################################################
 
 #For extrating something out of it:
 # For example, to access and print summary statistics for each data frame:
@@ -593,6 +607,28 @@ for (name in names(list_of_samples)) {
 
 
 ```{r}
+#####GROUP STANDARD MIXTURES USED#####
+
+#####Set working directory#####
+working.directory <- "F:/LINKOPING/Manuscripts/Skyline/Skyline/"
+
+#####PREPARE DATASET FOR PATTERN RECONSTRUCTION#####
+{
+#Open input file
+input <- combined_df
+input$STD_code <- as.factor(input$STD_code)
+
+#Create all possible binary combinations between given calibration sets
+Combinations <- combn(x = levels(input$STD_code),m = 2,FUN = NULL,simplify = TRUE)
+
+#Store sum RFs for each group CP standard
+input <- input |>  group_by(Reference_standard) |>  mutate(Sum_response_factor = sum(Response_factor, na.rm = TRUE))
+input[c(1:5)] <- lapply(input[c(1:5)], as.factor) 
+input$Response_factor[is.na(input$Response_factor)] <- 0
+}
+
+
+#####SECTION FOR SAMPLE PROCESSING#####
 # Assuming you're iterating over each data frame in the list
 for (sample_df in list_of_samples) {
   # Get the 'Replicate Name' value from the data frame
