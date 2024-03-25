@@ -159,8 +159,12 @@ create_molecule_name <- function(i, j) {
 
 # Create an empty list to store plots and calibration results
 plotsA <- list()
-calibration_resultsA <- data.frame(Molecule = character(),
-                                  Slope = numeric(),
+calibration_resultsA <- data.frame(STD_code = character(),
+                                  Reference_standard = character(),
+                                  Chain_length = character(),
+                                  Type = character(),
+                                  Homologue = character(),
+                                  Response_factor = numeric(),
                                   Intercept = numeric(),
                                   R_squared = numeric(),
                                   stringsAsFactors = FALSE)
@@ -195,11 +199,14 @@ for (i in i_values) {
       
       # Store the calibration results in the data frame
       calibration_resultsA <- rbind(calibration_resultsA, 
-                                   data.frame(Molecule = molecule_name,
-                                              Slope = slopeA,
+                                   data.frame(Reference_standard = "A",
+                                              Chain_length = "C" [i],
+                                              Type = "SCCPs",
+                                              Homologue = molecule_name,
+                                              Response_factor = round(slopeA),
                                               Intercept = interceptA,
                                               R_squared = R_squaredA))
-      
+    
       # Create plot for the current molecule
       plotA <- ggplot(filtered_dataA, aes(x = `Analyte Concentration`, y = Area)) +
         geom_point() +
@@ -277,7 +284,7 @@ for (i in i_values) {
       # Store the calibration results in the data frame
       calibration_resultsB <- rbind(calibration_resultsB, 
                                    data.frame(Molecule = molecule_name,
-                                              Slope = slopeB,
+                                              Slope = round(slopeB),
                                               Intercept = interceptB,
                                               R_squared = R_squaredB))
       
