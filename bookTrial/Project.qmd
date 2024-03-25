@@ -531,43 +531,6 @@ combined_df <- rbind(calibration_resultsA, calibration_resultsB)
 
 ### Prepare the input for the samples:
 
-```{r}
-#Load the file and prepare the data frame
-
-TESTINGB<-read_excel("F:/LINKOPING/Manuscripts/Skyline/Skyline/TESTINGB.xlsx")|>
-   filter(`Isotope Label Type` == "Quan")|> #Filter for the quan ions
-   mutate(Area= as.numeric(Area)) |>  #Make sure that the values are numeric
-   TESTING$Chain_length <- sub(".*-C(9|10|11|12|13|14|15|16|17)$", "\\1", TESTINGB$"Molecule list") #Generate the column chain Length
-
-#Grouping samples for creating one data frame for each
-
-list_of_samples <- split(TESTINGB, TESTINGB$`Replicate Name`)
-
-#Now I can access each individual data frame from the list and perform further operations as needed. For example, you can access the data frames using indexing:
-
-# Accessing the data frame for a specific sample (e.g., "D1")
-D1_df <- list_of_samples[["D1"]]
-
-#I don't want to manually access  all the samples (data frames) manually specifying each group name, so I want to iterate over the list of data frames. 
-
-#The list of data frames generated using split()
-
-list_of_samples <- split(TESTINGB, TESTINGB$`Replicate Name`)
-
-# Now we have a list of data frames, each containing rows with the same name in the 'Replicate Name' column.
-# We can access each data frame in the list and perform operations on it as needed.
-
-
-
-
-#For extrating something out of it:
-# For example, to access and print summary statistics for each data frame:
-for (name in names(list_of_samples)) {
-  current_df <- list_of_samples[[name]]
-  cat("Name:", name, "\n")
-  print(summary(current_df))
-}
-```
 
 
 
