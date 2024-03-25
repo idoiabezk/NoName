@@ -532,10 +532,12 @@ combined_df <- rbind(calibration_resultsA, calibration_resultsB)
 ### Prepare the input for the samples:
 
 ```{r}
-#Load the file and filter for Quan ions
+#Load the file and prepare the data frame
 
 TESTINGB<-read_excel("F:/LINKOPING/Manuscripts/Skyline/Skyline/TESTINGB.xlsx")|>
-   filter(`Isotope Label Type` == "Quan")
+   filter(`Isotope Label Type` == "Quan")|> #Filter for the quan ions
+   mutate(Area= as.numeric(Area)) |>  #Make sure that the values are numeric
+   TESTING$Chain_length <- sub(".*-C(9|10|11|12|13|14|15|16|17)$", "\\1", TESTINGB$"Molecule list") #Generate the column chain Length
 
 #Grouping samples for creating one data frame for each
 
@@ -583,7 +585,7 @@ sample$Area <- as.numeric(sample$Area)
 #Calculate relative area distribution within each homologue group
 sample$Relative_distribution <- NA
 sample$Area[is.na(sample$Area)] <- 0
-sample <- sample %>% mutate(Relative_distribution = Area/sum(Area, na.rm = TRUE))
+sample <- sample  |>  mutate(Relative_distribution = Area/sum(Area, na.rm = TRUE))
 results <- sample
 results[c("Comp_1","Comp_2","Fraction_Comp_1","Simulated_pattern")] <- NA
 #Deconvolution of homologue patterns
@@ -648,6 +650,86 @@ colnames(results_output) <- c("Total concentration, ng/\U00B5L","Type","Sample n
 }
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+# Assuming you're iterating over each data frame in the list
+for (sample_df in list_of_samples) {
+  # Get the 'Replicate Name' value from the data frame
+  sample_name <- sample_df$`Replicate Name`
+  
+  # Set sample name
+  # (You can print the sample name to verify it's correct)
+  print(paste("Processing sample:", sample_name))
+  
+  # Now you can use the sample_df for further processing
+  
+  ####RUN PATTERN RECONSTRACTION FOR SELECTED (LOADED) SAMPLE####
+  sample_df <- sample_df %>%
+    mutate(
+      Chain_length = as.factor(Chain_length),
+      Area = as.numeric(Area),
+      Relative_distribution = Area / sum(Area, na.rm = TRUE)
+    )
+  #Calculate relative area distribution within each homologue group
+  sample_df$Relative_distribution <- NA
+sample_df$Area[is.na(sample$Area)] <- 0
+sample_df <- sample_df %>% mutate(Relative_distribution = Area/sum(Area, na.rm = TRUE))
+results <- sample_df
+results[c("Comp_1","Comp_2","Fraction_Comp_1","Simulated_pattern")] <- NA
+  # Create 'results' data frame and perform other operations as needed
+  results <- sample_df
+  results[c("Comp_1", "Comp_2", "Fraction_Comp_1", "Simulated_pattern")] <- NA
+  
+  # Deconvolution of homologue patterns (adjust your loop accordingly)
+  REF <- sample_df$Relative_distribution
+  Distance <- 100
+  for (z in 1:length(Combinations[1,])) {
+    C_1 <- subset(input, subset = (STD_code == Combinations[1, z]))
+    C_2 <- subset(input, subset = (STD_code == Combinations[2, z]))
+    for (j in 1:100) {
+      Combo <- (C_1$Response_factor * j + C_2$Response_factor * (100 - j)) / sum((C_1$Response_factor * j + C_2$Response_factor * (100 - j)), na.rm = TRUE)
+      if (Distance > (sum(sqrt((REF - Combo)^2)))) {
+        results$Comp_1 <- as.character(C_1$STD_code)
+        results$Comp_2 <- as.character(C_2$STD_code)
+        results$Fraction_Comp_1 <- j
+        results$Simulated_pattern <- Combo
+        Distance <- sum(sqrt((REF - Combo)^2))
+      }
+    }
+  }
+}
+  # After processing one data frame, you can decide what to do next
+  # For example, you can save the 'results' data frame or do further analysis
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
