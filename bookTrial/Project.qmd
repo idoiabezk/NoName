@@ -531,96 +531,62 @@ combined_df <- rbind(calibration_resultsA, calibration_resultsB)
 
 ### Prepare the input for the samples:
 
-
-
-
-
 ```{r}
-# Replace the read_xlsx() function with accessing the appropriate data frame from the list
-sample <- list_of_samples[["Replicate Name"]]
+#Load the file and prepare the data frame
 
-####Set sample name####
-sample.name <- "BNa2SO4"
-####RUN PATTERN RECONSTRACTION FOR SELECTED (LOADED) SAMPLE####
-{
-sample$Chain_length <- as.factor(sample$Chain_length)
-sample$Area <- as.numeric(sample$Area)
-#Calculate relative area distribution within each homologue group
-sample$Relative_distribution <- NA
-sample$Area[is.na(sample$Area)] <- 0
-sample <- sample  |>  mutate(Relative_distribution = Area/sum(Area, na.rm = TRUE))
-results <- sample
-results[c("Comp_1","Comp_2","Fraction_Comp_1","Simulated_pattern")] <- NA
-#Deconvolution of homologue patterns
+TESTINGB<-read_excel("F:/LINKOPING/Manuscripts/Skyline/Skyline/TESTINGB.xlsx")|>
+   filter(`Isotope Label Type` == "Quan")|> #Filter for the quan ions
+   mutate(Area= as.numeric(Area))   #Make sure that the values are numeric
+TESTINGB$Chain_length <- sub(".*-C(9|10|11|12|13|14|15|16|17)$", "\\1", TESTINGB$"Molecule List")   #Generate the column chain Length which will contain the number of carbons
+
+# Determine the type based on the Chain lenght
+      TESTINGB$type <- ifelse(
+  TESTINGB$Chain_length >= 10 & TESTINGB$Chain_length <= 13,
+  "SCCPs",
+  ifelse(
+    TESTINGB$Chain_length >= 14 & TESTINGB$Chain_length <= 17,
+    "MCCPs",
+    ifelse(
+      TESTINGB$Chain_length >= 18 & TESTINGB$Chain_length <= 30,
+      "LCCPs",
+      "Unknown"
+    )
+  )
+)
+TESTINGB$Chain_length <- paste("C",sub(".*-C(9|10|11|12|13|14|15|16|17)$", "\\1", TESTINGB$"Molecule List")) #Change the column chain Lengthcolumn so it fits the following script and the one of the standards
+
+#Rename the column Molecule to Homologue so it fits the next script and the one of the standards
+colnames(TESTINGB)[which(colnames(TESTINGB) == "Molecule")] <- "Homologue"
+
+#Grouping samples for creating one data frame for each
+
+list_of_samples <- split(TESTINGB, TESTINGB$`Replicate Name`)
+
+#Now I can access each individual data frame from the list and perform further operations as needed. For example, you can access the data frames using indexing:
+
+# Accessing the data frame for a specific sample (e.g., "D1")
+D1_df <- list_of_samples[["D1"]]
+
+#I don't want to manually access  all the samples (data frames) manually specifying each group name, so I want to iterate over the list of data frames. 
+
+#The list of data frames generated using split()
+
+list_of_samples <- split(TESTINGB, TESTINGB$`Replicate Name`)
+
+# Now we have a list of data frames, each containing rows with the same name in the 'Replicate Name' column.
+# We can access each data frame in the list and perform operations on it as needed.
 
 
-REF <- sample$Relative_distribution
-Distance <- 100
-for (z in 1:length(Combinations[1,])){                                     
-C_1 <- subset(input,subset = (STD_code == Combinations[1,z]))
-C_2 <- subset(input,subset = (STD_code == Combinations[2,z]))
-for (j in 1:100) {
-  Combo <- (C_1$Response_factor*j+C_2$Response_factor*(100-j))/sum((C_1$Response_factor*j+C_2$Response_factor*(100-j)), na.rm=TRUE)
-  if (Distance > (sum(sqrt((REF-Combo)^2)))) {
-    results$Comp_1 <- as.character(C_1$STD_code)
-    results$Comp_2 <- as.character(C_2$STD_code)
-    results$Fraction_Comp_1 <- j
-    results$Simulated_pattern <- Combo
-    Distance <- sum(sqrt((REF-Combo)^2))
-  }
+
+
+#For extrating something out of it:
+# For example, to access and print summary statistics for each data frame:
+for (name in names(list_of_samples)) {
+  current_df <- list_of_samples[[name]]
+  cat("Name:", name, "\n")
+  print(summary(current_df))
 }
-}
-#Calculate concentrations (ng per microliter)
-
-results[c("RF_1st", "RF_2nd", "Concentration")] <- NA
-results[c("RF_1st", "RF_2nd", "Concentration")] <- sapply(results[c("RF_1st", "RF_2nd", "Concentration")], as.numeric)
-results$Fraction_Comp_1<- as.numeric(results$Fraction_Comp_1)
-results$RF_1st <- input$Sum_response_factor[input$STD_code == results$Comp_1[1]]
-results$RF_2nd <- input$Sum_response_factor[input$STD_code == results$Comp_2[1]]
-
-results <- results %>% mutate(Concentration= sum(Area)/(RF_1st*(Fraction_Comp_1/100)+RF_2nd*((100-Fraction_Comp_1)/100)))
-
-#Visualization of results
-
-plot_table<-data.frame(Distribution = c(results$Relative_distribution,results$Simulated_pattern),Homologue = results$Homologue, Chain_length = results$Chain_length, Origin = rep(as.factor(c("Measured","Simulated")), each = nrow(results)))
-plot_table$Homologue <- factor(plot_table$Homologue, levels=unique(plot_table$Homologue))
-
-plot <- ggplot(plot_table, aes(x = Homologue,y = Distribution*100, fill = Origin, colour = Origin))+
-  geom_bar(stat="identity",position = position_dodge(width = 0.9), width = 0.8, size = .4)+
-  theme(panel.background = element_blank())+
-  scale_fill_manual(values=c("darkolivegreen3", "darkslategray4"))+
-  scale_color_manual(values=c("darkolivegreen4", "darkslategray"))+
-  ggtitle(label = paste(sample.name," - Distribution of CP homologues")) +
-  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0))+
-  xlab("") + ylab("Relative area distribution, %")+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-  theme(legend.key.size =  unit(0.15, "in"),
-        legend.text = element_text(size=10),
-        legend.title = element_text(size=10),
-        panel.background = element_rect(fill = "white"),panel.border = element_rect(fill = NA, colour = "grey20"),
-        panel.grid.major.y = element_line(colour = "grey50"),
-        panel.grid.minor.y = element_line(colour = "grey80"),
-        panel.grid.major.x = element_blank(),
-        legend.position = "bottom",strip.background = element_rect(fill = "grey20"), strip.text = element_text(colour = "white", face = "bold"))+
-  facet_wrap(.~ Chain_length, scales = "free",nrow = 4, ncol = 4)
-
-
-results_output <-results %>% summarise(median(Concentration))
-results_output$Type <- results$Type[1]
-results_output$Sample <- sample.name
-results_output$comment <- paste("The best match:",results$Fraction_Comp_1[1],"% of ",results$Comp_1[1]," and ",100-results$Fraction_Comp_1[1],"% of ",results$Comp_2[1], sep="")
-colnames(results_output) <- c("Total concentration, ng/\U00B5L","Type","Sample name","Comment")
-}
-
 ```
-
-
-
-
-
-
-
-
 
 
 
