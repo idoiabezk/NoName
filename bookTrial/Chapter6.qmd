@@ -262,7 +262,7 @@ ggplot(aes(x = somePFAS, y = Conc)) +
 ```{r}
 PFAS_insects_long |> mutate(Color = ifelse(Conc > 50, "orange", "black")) |> 
 ggplot(aes(x = somePFAS, y = Conc)) +
-  geom_point(color = Color) +
+  #geom_point(color = ~Color) +
   geom_boxplot() + #ifelse(test, yes, no)
   scale_color_identity() +  # Use scale_color_identity to override the default color mapping
   theme_classic() +
@@ -272,7 +272,7 @@ ggplot(aes(x = somePFAS, y = Conc)) +
 
 ```{r}
 ggplot(data = PFAS_insects_long, aes(x = somePFAS, y = Conc)) +
-  geom_point(color = ifelse(as.numeric(somePFAS) < 0.007, "orange", "black")) +
+  #geom_point(color = ifelse(as.numeric(somePFAS) < 0.007, "orange", "black")) +
   #geom_boxplot() +
   #scale_color_identity() +  # Use scale_color_identity to override the default color mapping
   theme_classic() +
