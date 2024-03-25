@@ -434,63 +434,70 @@ ggplot2 3.3.4.
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an empty list to store plots and calibration results</span></span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>plotsA <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>calibration_resultsA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Molecule =</span> <span class="fu">character</span>(),</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Slope =</span> <span class="fu">numeric</span>(),</span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Intercept =</span> <span class="fu">numeric</span>(),</span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">R_squared =</span> <span class="fu">numeric</span>(),</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the range of i and j</span></span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>i_values <span class="ot">&lt;-</span> <span class="dv">11</span></span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>j_values <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">11</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>calibration_resultsA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">STD_code =</span> <span class="fu">character</span>(),</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Reference_standard =</span> <span class="fu">character</span>(),</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Chain_length =</span> <span class="fu">character</span>(),</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Type =</span> <span class="fu">character</span>(),</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Homologue =</span> <span class="fu">character</span>(),</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Response_factor =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Intercept =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">R_squared =</span> <span class="fu">numeric</span>(),</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Nested loops to iterate over i and j</span></span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> i_values) {</span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> j_values) {</span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create molecule name</span></span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    molecule_name <span class="ot">&lt;-</span> <span class="fu">create_molecule_name</span>(i, j)</span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Filter data for the current molecule</span></span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>    filtered_dataA <span class="ot">&lt;-</span> TESTING <span class="sc">|&gt;</span></span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="st">`</span><span class="at">Isotope Label Type</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Quan"</span>, Molecule <span class="sc">==</span> molecule_name, Note <span class="sc">==</span> <span class="st">"A"</span>) </span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the range of i and j</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>i_values <span class="ot">&lt;-</span> <span class="dv">11</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>j_values <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">11</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Nested loops to iterate over i and j</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> i_values) {</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> j_values) {</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create molecule name</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    molecule_name <span class="ot">&lt;-</span> <span class="fu">create_molecule_name</span>(i, j)</span>
 <span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check if there are any non-NA cases in the filtered data</span></span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(filtered_dataA<span class="sc">$</span>Area)) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">||</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(filtered_dataA<span class="sc">$</span><span class="st">`</span><span class="at">Analyte Concentration</span><span class="st">`</span>)) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"No valid cases for fitting the model for molecule:"</span>, molecule_name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Fit linear model to the data</span></span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>      lm_modelA <span class="ot">&lt;-</span> <span class="fu">lm</span>(Area <span class="sc">~</span> <span class="st">`</span><span class="at">Analyte Concentration</span><span class="st">`</span>, <span class="at">data =</span> filtered_dataA)</span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Extract slope and intercept from the model</span></span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>      slopeA <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_modelA)[<span class="dv">2</span>]</span>
-<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>      interceptA <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_modelA)[<span class="dv">1</span>]</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Filter data for the current molecule</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    filtered_dataA <span class="ot">&lt;-</span> TESTING <span class="sc">|&gt;</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="st">`</span><span class="at">Isotope Label Type</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Quan"</span>, Molecule <span class="sc">==</span> molecule_name, Note <span class="sc">==</span> <span class="st">"A"</span>) </span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check if there are any non-NA cases in the filtered data</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(filtered_dataA<span class="sc">$</span>Area)) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">||</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(filtered_dataA<span class="sc">$</span><span class="st">`</span><span class="at">Analyte Concentration</span><span class="st">`</span>)) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"No valid cases for fitting the model for molecule:"</span>, molecule_name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Fit linear model to the data</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>      lm_modelA <span class="ot">&lt;-</span> <span class="fu">lm</span>(Area <span class="sc">~</span> <span class="st">`</span><span class="at">Analyte Concentration</span><span class="st">`</span>, <span class="at">data =</span> filtered_dataA)</span>
 <span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Calculate R-squared</span></span>
-<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>      R_squaredA <span class="ot">&lt;-</span> <span class="fu">summary</span>(lm_modelA)<span class="sc">$</span>r.squared</span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Store the calibration results in the data frame</span></span>
-<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>      calibration_resultsA <span class="ot">&lt;-</span> <span class="fu">rbind</span>(calibration_resultsA, </span>
-<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">data.frame</span>(<span class="at">Molecule =</span> molecule_name,</span>
-<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Slope =</span> slopeA,</span>
-<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Intercept =</span> interceptA,</span>
-<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">R_squared =</span> R_squaredA))</span>
-<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Create plot for the current molecule</span></span>
-<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>      plotA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(filtered_dataA, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Analyte Concentration</span><span class="st">`</span>, <span class="at">y =</span> Area)) <span class="sc">+</span></span>
-<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, </span>
-<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>                    <span class="at">se =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colour =</span> <span class="st">"orange"</span>,</span>
-<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>                    <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylab</span>(<span class="st">"Area"</span>) <span class="sc">+</span></span>
-<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggtitle</span>(<span class="fu">paste</span>(<span class="st">"Molecule:"</span>, molecule_name))</span>
-<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Store the plot in the list</span></span>
-<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>      plotsA[[<span class="fu">paste</span>(<span class="st">"Molecule"</span>, molecule_name)]] <span class="ot">&lt;-</span> plotA</span>
-<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Extract slope and intercept from the model</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>      slopeA <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_modelA)[<span class="dv">2</span>]</span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>      interceptA <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_modelA)[<span class="dv">1</span>]</span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Calculate R-squared</span></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>      R_squaredA <span class="ot">&lt;-</span> <span class="fu">summary</span>(lm_modelA)<span class="sc">$</span>r.squared</span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Store the calibration results in the data frame</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>      calibration_resultsA <span class="ot">&lt;-</span> <span class="fu">rbind</span>(calibration_resultsA, </span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">data.frame</span>(<span class="at">Reference_standard =</span> <span class="st">"A"</span>,</span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Chain_length =</span> <span class="st">"C"</span> [i],</span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Type =</span> <span class="st">"SCCPs"</span>,</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Homologue =</span> molecule_name,</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Response_factor =</span> <span class="fu">round</span>(slopeA),</span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Intercept =</span> interceptA,</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">R_squared =</span> R_squaredA))</span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Create plot for the current molecule</span></span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>      plotA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(filtered_dataA, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Analyte Concentration</span><span class="st">`</span>, <span class="at">y =</span> Area)) <span class="sc">+</span></span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, </span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>                    <span class="at">se =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colour =</span> <span class="st">"orange"</span>,</span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>                    <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylab</span>(<span class="st">"Area"</span>) <span class="sc">+</span></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggtitle</span>(<span class="fu">paste</span>(<span class="st">"Molecule:"</span>, molecule_name))</span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Store the plot in the list</span></span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>      plotsA[[<span class="fu">paste</span>(<span class="st">"Molecule"</span>, molecule_name)]] <span class="ot">&lt;-</span> plotA</span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No valid cases for fitting the model for molecule: C11H21Cl3 
 No valid cases for fitting the model for molecule: C11H14Cl10 
@@ -499,13 +506,20 @@ No valid cases for fitting the model for molecule: C11H13Cl11 </code></pre>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the data frame with calibration results</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(calibration_resultsA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                          Molecule        Slope   Intercept R_squared
-`Analyte Concentration`  C11H20Cl4     55.49065   -128.4533 1.0000000
-`Analyte Concentration`1 C11H19Cl5   3504.14074   7551.7035 0.8560300
-`Analyte Concentration`2 C11H18Cl6 200370.33017 -65240.9809 0.9953752
-`Analyte Concentration`3 C11H17Cl7 111547.20139 -69087.2219 0.5773315
-`Analyte Concentration`4 C11H16Cl8  17455.53491  -3024.9974 0.9960371
-`Analyte Concentration`5 C11H15Cl9   -599.32315   5506.1035 0.3937749</code></pre>
+<pre><code>                         Reference_standard Chain_length  Type Homologue
+`Analyte Concentration`                   A         &lt;NA&gt; SCCPs C11H20Cl4
+`Analyte Concentration`1                  A         &lt;NA&gt; SCCPs C11H19Cl5
+`Analyte Concentration`2                  A         &lt;NA&gt; SCCPs C11H18Cl6
+`Analyte Concentration`3                  A         &lt;NA&gt; SCCPs C11H17Cl7
+`Analyte Concentration`4                  A         &lt;NA&gt; SCCPs C11H16Cl8
+`Analyte Concentration`5                  A         &lt;NA&gt; SCCPs C11H15Cl9
+                         Response_factor   Intercept R_squared
+`Analyte Concentration`               55   -128.4533 1.0000000
+`Analyte Concentration`1            3504   7551.7035 0.8560300
+`Analyte Concentration`2          200370 -65240.9809 0.9953752
+`Analyte Concentration`3          111547 -69087.2219 0.5773315
+`Analyte Concentration`4           17456  -3024.9974 0.9960371
+`Analyte Concentration`5            -599   5506.1035 0.3937749</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Arrange plots in a grid</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>calibration_curves_gridA <span class="ot">&lt;-</span> plotsA[[<span class="dv">1</span>]]</span>
@@ -587,7 +601,7 @@ No valid cases for fitting the model for molecule: C11H13Cl11 </code></pre>
 <span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Store the calibration results in the data frame</span></span>
 <span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a>      calibration_resultsB <span class="ot">&lt;-</span> <span class="fu">rbind</span>(calibration_resultsB, </span>
 <span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">data.frame</span>(<span class="at">Molecule =</span> molecule_name,</span>
-<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Slope =</span> slopeB,</span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Slope =</span> <span class="fu">round</span>(slopeB),</span>
 <span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">Intercept =</span> interceptB,</span>
 <span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">R_squared =</span> R_squaredB))</span>
 <span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>      </span>
@@ -615,13 +629,13 @@ No valid cases for fitting the model for molecule: C11H13Cl11 </code></pre>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the data frame with calibration results</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(calibration_resultsB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                           Molecule       Slope    Intercept R_squared
-`Analyte Concentration`   C11H19Cl5    281.5607    -100.5869 0.9985452
-`Analyte Concentration`1  C11H18Cl6  69945.1458  -21222.1094 0.9982298
-`Analyte Concentration`2  C11H17Cl7 684163.4231 -345883.4802 0.9899243
-`Analyte Concentration`3  C11H16Cl8 527968.6603 -129197.1053 0.9984855
-`Analyte Concentration`4  C11H15Cl9 117684.0279  -24610.5452 0.9985014
-`Analyte Concentration`5 C11H14Cl10   8783.9772   -3011.7311 0.9939191</code></pre>
+<pre><code>                           Molecule  Slope    Intercept R_squared
+`Analyte Concentration`   C11H19Cl5    282    -100.5869 0.9985452
+`Analyte Concentration`1  C11H18Cl6  69945  -21222.1094 0.9982298
+`Analyte Concentration`2  C11H17Cl7 684163 -345883.4802 0.9899243
+`Analyte Concentration`3  C11H16Cl8 527969 -129197.1053 0.9984855
+`Analyte Concentration`4  C11H15Cl9 117684  -24610.5452 0.9985014
+`Analyte Concentration`5 C11H14Cl10   8784   -3011.7311 0.9939191</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Arrange plots in a grid</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>calibration_curves_gridB <span class="ot">&lt;-</span> plotsB[[<span class="dv">1</span>]]</span>
