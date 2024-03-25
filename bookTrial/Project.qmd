@@ -197,7 +197,7 @@ for (i in i_values) {
       # Calculate R-squared
       R_squaredA <- summary(lm_modelA)$r.squared
       
-      # Store the calibration results in the data frame
+      # Store the calibration results in the data frame, create the columns and values that we need to fit with the next script (the one for the deconvolution paper publihsed by I don't remember)
       calibration_resultsA <- rbind(calibration_resultsA, 
                                    data.frame(Reference_standard = "A",
                                               Chain_length = "C" [i],
@@ -319,6 +319,75 @@ for (i in 2:length(plotsB)) {
 calibration_curves_gridB
 
 ```
+
+
+```{r}
+# Nested loops to iterate over i and j
+for (i in i_values) {
+  for (j in j_values) {
+    # Create molecule name
+    molecule_name <- create_molecule_name(i, j)
+    
+    # Filter data for the current molecule
+    filtered_dataA <- TESTING |>
+      filter(`Isotope Label Type` == "Quan", Molecule == molecule_name, Note == "A") 
+    
+    # Check if there are any non-NA cases in the filtered data
+    if (sum(!is.na(filtered_dataA$Area)) == 0 || sum(!is.na(filtered_dataA$`Analyte Concentration`)) == 0) {
+      cat("No valid cases for fitting the model for molecule:", molecule_name, "\n")
+    } else {
+      # Fit linear model to the data
+      lm_modelA <- lm(Area ~ `Analyte Concentration`, data = filtered_dataA)
+      
+      # Extract slope and intercept from the model
+      slopeA <- coef(lm_modelA)[2]
+      interceptA <- coef(lm_modelA)[1]
+      
+      # Calculate R-squared
+      R_squaredA <- summary(lm_modelA)$r.squared
+      
+      # Determine the type based on the value of i
+      if (i >= 10 && i <= 13) {
+        type <- "SCCPs"
+      } else if (i >= 14 && i <= 17) {
+        type <- "MCCPs"
+      } else if (i >= 18 && i <= 30) {
+        type <- "LCCPs"
+      } else {
+        type <- "Unknown"
+      }
+      
+      # Store the calibration results in the data frame
+      calibration_resultsA <- rbind(calibration_resultsA, 
+                                   data.frame(Reference_standard = "A",
+                                              Chain_length = i,
+                                              Type = type,
+                                              Homologue = molecule_name,
+                                              Response_factor = round(slopeA),
+                                              Intercept = interceptA,
+                                              R_squared = R_squaredA))
+    
+      # Create plot for the current molecule
+      plotA <- ggplot(filtered_dataA, aes(x = `Analyte Concentration`, y = Area)) +
+        geom_point() +
+        geom_smooth(method = "lm", 
+                    se = FALSE, 
+                    colour = "orange",
+                    size = 1) +
+        theme_classic() +
+        ylab("Area") +
+        ggtitle(paste("Molecule:", molecule_name))
+      
+      # Store the plot in the list
+      plotsA[[paste("Molecule", molecule_name)]] <- plotA
+    }
+  }
+}
+
+```
+
+
+
 
 ### The code for Excel:
 
