@@ -682,6 +682,7 @@ REF <- sample_df$Relative_distribution
   }
 
 # Calculate concentrations (ng per microliter)
+# Calculate concentrations (ng per microliter)
 results$RF_1st <- NA
 results$RF_2nd <- NA
 
@@ -739,7 +740,7 @@ results_output <- results %>%
     Comment = paste("The best match:", Fraction_Comp_1[1], "% of ", Comp_1[1], " and ", 100 - Fraction_Comp_1[1], "% of ", Comp_2[1])
   ) %>%
   rename("Total concentration, ng/µL" = "median(Concentration)")
-}
+ }
 ####VIEW RESULTS####
 #View Overview
 print(results_output)
