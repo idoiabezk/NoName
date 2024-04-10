@@ -1,9 +1,28 @@
-# Preface {.unnumbered}
+---
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
 
-This is a Quarto book.
+# Index {.unnumbered}
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+The different sections in the book include:
 
-```{r}
-1 + 1
-```
+-   **Introduction**
+
+-   **Chapter 1:** Getting familiar with R programming
+
+-   **Chapter 2:** Hands-on R programming
+
+-   **Chapter 3:** Working flows on R programming
+
+-   **Chapter 4:** Data transformation
+
+-   **Chapter 5:** Data tidying
+
+-   **Chapter 6:** Exercise 1
+
+-   **Chapter 7:** Project
+
+
+

@@ -15,7 +15,8 @@ book:
     - Chapter4.qmd
     - Chapter5.qmd
     - Chapter6.qmd
-    - Project.qmd
+    - Project.draft.qmd
+    - FinalProject.qmd
     - summary.qmd
     - references.qmd
 
